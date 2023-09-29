@@ -9,10 +9,10 @@ locals {}
 #ACM ()
 #Route53 dev.xyz.ca
 #SecurtyBaseline
-  #Cloudtrail
-  #GuardDuty
-  #SecutyHub
-  #GuardRails
+#Cloudtrail
+#GuardDuty
+#SecutyHub
+#GuardRails
 
 #EKS
 #RDS

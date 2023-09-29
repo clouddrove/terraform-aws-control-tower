@@ -9,9 +9,9 @@ locals {}
 #ACM ()
 #Route53 networking.identos.ca
 #SecurtyBaseline
-  #Cloudtrail
-  #GuardDuty
-  #SecutyHub
-  #GuardRails
+#Cloudtrail
+#GuardDuty
+#SecutyHub
+#GuardRails
 # VPN
 # Bastion host
