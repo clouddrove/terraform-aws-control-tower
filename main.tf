@@ -29,3 +29,27 @@ module "subnet" {
   cidr_block         = module.vpc.vpc_cidr_block
 
 }
+
+module "acm" {
+  source  = "clouddrove/acm/aws"
+  version = "1.4.0"
+
+  name        = var.name
+  environment = var.environment
+
+  domain_name               = var.domain
+  subject_alternative_names = ["*.${var.domain}", "www.${var.domain}"]
+}
+
+
+module "route53" {
+  source = "clouddrove/route53/aws"
+
+  name        = var.name
+  environment = var.environment
+
+  public_enabled  = var.public_enabled
+  private_enabled = var.private_enabled
+
+  domain_name = var.domain_name
+}
