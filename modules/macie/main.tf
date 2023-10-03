@@ -80,6 +80,7 @@ module "iam-role" {
   name               = "iam-role"
   environment        = var.environment
   label_order        = var.label_order
+  enable             = var.enable
   assume_role_policy = data.aws_iam_policy_document.default.json
   policy_enabled     = true
   policy             = data.aws_iam_policy_document.iam-policy.json
