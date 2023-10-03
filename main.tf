@@ -82,21 +82,20 @@ module "http_https" {
 
 ##----------------------------------------------TRANSIT-GATEWAY----------------------------------------------------##
 module "tgw_hub" {
-  source                          = "clouddrove/transit-gateway/aws"
-  version                         = "2.0.0"
+  source  = "clouddrove/transit-gateway/aws"
+  version = "2.0.0"
 
-  depends_on                      = [module.vpc, module.subnet]
-  name                            = var.name
-  environment                     = var.environment
-  tgw_create                      = var.tgw_create
-  amazon_side_asn                 = var.amazon_side_asn
-  auto_accept_shared_attachments  = var.auto_accept_shared_attachments
-  default_route_table_propagation = var.default_route_table_propagation
-  description                     = var.description
+  enable                         = var.tgw_hub_enable
+  depends_on                     = [module.vpc, module.subnet]
+  name                           = var.name
+  environment                    = var.environment
+  tgw_create                     = var.hub_tgw_create
+  auto_accept_shared_attachments = var.hub_auto_accept_shared_attachments
+  description                    = var.description
   #TGW Share
   resource_share_enable                    = var.resource_share_enable
   resource_share_allow_external_principals = var.resource_share_allow_external_principals
-  # resource_share_account_ids               = var.resource_share_account_ids
+  resource_share_account_ids               = var.resource_share_account_ids
   # VPC Attachements
   vpc_attachments = {
     vpc1 = {
@@ -104,9 +103,35 @@ module "tgw_hub" {
       subnet_ids                                      = module.subnet.private_subnet_id
       transit_gateway_default_route_table_association = var.transit_gateway_default_route_table_association
       transit_gateway_default_route_table_propagation = var.transit_gateway_default_route_table_propagation
-      # Below should be uncommented only when vpc and subnet are already deployed.
-      vpc_route_table_ids = module.dmz_subnet.public_route_tables_id
-      destination_cidr    = var.destination_cidr_1
+      vpc_route_table_ids                             = module.subnet.private_route_tables_id
+      destination_cidr                                = var.hub_destination_cidr
+    }
+  }
+}
+
+module "tgw_spoke" {
+  source  = "clouddrove/transit-gateway/aws"
+  version = "2.0.0"
+
+  enable      = var.tgw_spoke_enable
+  depends_on  = [module.vpc, module.subnet]
+  name        = var.name
+  environment = var.environment
+  tgw_create  = var.spoke_tgw_create
+  description = var.description
+  #TGW Share
+  aws_ram_resource_share_accepter = var.aws_ram_resource_share_accepter
+  resource_share_arn              = var.resource_share_arn
+  # VPC Attachements
+  transit_gateway_id = "tgw-gdfeffdsfdsfdf" #var.transit_gateway_id
+  vpc_attachments = {
+    vpc1 = {
+      vpc_id                                          = module.vpc.vpc_id
+      subnet_ids                                      = module.subnet.private_subnet_id
+      transit_gateway_default_route_table_association = var.transit_gateway_default_route_table_association
+      transit_gateway_default_route_table_propagation = var.transit_gateway_default_route_table_propagation
+      vpc_route_table_ids                             = module.subnet.public_route_tables_id
+      destination_cidr                                = var.spoke_destination_cidr
     }
   }
 }

@@ -65,14 +65,14 @@ variable "subnet_type" {
 
 ##----------------------------------------------SECURITY-GROUP----------------------------------------------------##
 variable "ssh_ingress_allow_ip" {
-  type = list(string)
-  default = [ "" ]
+  type        = list(string)
+  default     = [""]
   description = "List of IP's to allowed for http_https traffic"
 }
 
 variable "http_https_ingress_allow_ip" {
-  type = list(string)
-  default = [ "" ]
+  type        = list(string)
+  default     = [""]
   description = "List of IP's to allowed for http_https traffic"
 }
 
@@ -102,6 +102,104 @@ variable "http_https_egress_rule" {
     description      = "Allow all traffic."
   }]
   description = "Egress rules with only cidr_blockd. Should be used when new security group is been deployed."
+}
+
+##----------------------------------------------TRANSIT-GATEWAY----------------------------------------------------##
+variable "tgw_hub_enable" {
+  type        = bool
+  default     = true
+  description = "Enable subnet to create or not."
+}
+
+variable "hub_tgw_create" {
+  type        = bool
+  default     = true
+  description = "Whether or not to create a Transit Gateway."
+}
+
+variable "hub_auto_accept_shared_attachments" {
+  type        = string
+  default     = "enable"
+  description = "Whether resource attachment requests are automatically accepted. Valid values: disable, enable. Default value: disable."
+}
+
+variable "description" {
+  type        = string
+  default     = ""
+  description = "This transit Gateway is created for centerlised vpc peering"
+}
+
+variable "resource_share_enable" {
+  type        = bool
+  default     = true
+  description = "Whether or not to create a Resource Share for the Transit Gateway."
+}
+
+variable "resource_share_allow_external_principals" {
+  type        = bool
+  default     = true
+  description = "Whether or not to allow external principals for the Resource Share for the Transit Gateway."
+}
+
+variable "resource_share_account_ids" {
+  type        = list(any)
+  default     = []
+  description = "Ids of the account where the Transit Gateway should be shared."
+}
+
+variable "hub_destination_cidr" {
+  type        = list(any)
+  default     = []
+  description = "The destination CIDR block (VPC 1)."
+}
+
+variable "transit_gateway_default_route_table_association" {
+  type        = bool
+  default     = true
+  description = "Boolean whether the VPC Attachment should be associated with the EC2 Transit Gateway association default route table. This cannot be configured or perform drift detection with Resource Access Manager shared EC2 Transit Gateways. Default value: true."
+}
+
+variable "transit_gateway_default_route_table_propagation" {
+  type        = bool
+  default     = true
+  description = "Boolean whether the VPC Attachment should propagate routes with the EC2 Transit Gateway propagation default route table. This cannot be configured or perform drift detection with Resource Access Manager shared EC2 Transit Gateways. Default value: true."
+}
+
+## SPOKE
+variable "tgw_spoke_enable" {
+  type        = bool
+  default     = false
+  description = "Enable subnet to create or not."
+}
+
+variable "spoke_tgw_create" {
+  type        = bool
+  default     = false
+  description = "Whether or not to create a Transit Gateway."
+}
+
+variable "aws_ram_resource_share_accepter" {
+  type        = bool
+  default     = true
+  description = "Whether resource attachment requests are automatically accepted. Valid values: disable, enable. Default value: disable."
+}
+
+variable "resource_share_arn" {
+  type        = string
+  default     = ""
+  description = "Whether resource attachment requests are automatically accepted. Valid values: disable, enable. Default value: disable."
+}
+
+variable "spoke_destination_cidr" {
+  type        = list(any)
+  default     = []
+  description = "The destination CIDR block (VPC 1)."
+}
+
+variable "transit_gateway_id" {
+  type        = string
+  default     = null
+  description = "The ID of gateway id."
 }
 
 ##----------------------------------------------ACM----------------------------------------------------##
