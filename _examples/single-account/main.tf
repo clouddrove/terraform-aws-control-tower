@@ -6,7 +6,9 @@ locals {
   role_arn             = "arn:aws:iam::924144197303:role/identos-test-sw-role"
   cidr_block           = "10.10.0.0/16"
   subnet_type          = "private"
+  records              = []
   hub_destination_cidr = ["10.11.0.0/16"]
+  vpn_cidr_block       = "172.16.0.0/16"
 
 }
 
@@ -46,11 +48,11 @@ module "CT" {
 
   ## Route53
   record_enabled = true
-  records        = []
+  records        = local.records
 
   ## TGW-HUB
   hub_destination_cidr = local.hub_destination_cidr
 
   ## VPN
-  vpn_cidr_block = "172.16.0.0/16"
+  vpn_cidr_block = local.vpn_cidr_block
 }
