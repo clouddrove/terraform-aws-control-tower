@@ -152,17 +152,35 @@ module "acm" {
 
 ##----------------------------------------------ROUTE53----------------------------------------------------##
 module "route53" {
-  source = "clouddrove/route53/aws"
+  source  = "clouddrove/route53/aws"
   version = "1.0.2"
 
-  name        = var.name
-  enabled     = var.route53_enable
-  environment = var.environment
+  name            = var.name
+  enabled         = var.route53_enable
+  environment     = var.environment
   public_enabled  = var.public_enabled
   private_enabled = var.private_enabled
 
-  domain_name = var.domain
+  domain_name    = var.domain
   record_enabled = var.record_enabled
-  records     = var.records
-  vpc_id      = module.vpc.vpc_id
+  records        = var.records
+  vpc_id         = module.vpc.vpc_id
+}
+
+##----------------------------------------------VPN----------------------------------------------------##
+module "vpn" {
+  source  = "clouddrove/client-vpn/aws"
+  version = "1.0.7"
+
+  enabled             = var.vpn_enable
+  name                = var.name
+  environment         = var.environment
+  split_tunnel_enable = var.split_tunnel_enable
+  cidr_block          = var.vpn_cidr_block
+  vpc_id              = module.vpc.vpc_id
+  subnet_ids          = module.subnet.private_subnet_id
+  route_cidr          = var.vpn_route_cidr
+  route_subnet_ids    = module.subnet.private_subnet_id
+  network_cidr        = var.vpn_network_cidr
+  saml_arn            = var.saml_arn
 }

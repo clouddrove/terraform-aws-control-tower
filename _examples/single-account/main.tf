@@ -1,11 +1,12 @@
 locals {
-  name        = "ct"
-  environment = "network"
-  region      = "us-east-1"
-  domain      = "identos.ca"
-  role_arn    = "arn:aws:iam::924144197303:role/identos-test-sw-role"
-  cidr_block  = "10.10.0.0/16"
-  subnet_type = "private"
+  name                 = "ct"
+  environment          = "network"
+  region               = "us-east-1"
+  domain               = "identos.ca"
+  role_arn             = "arn:aws:iam::924144197303:role/identos-test-sw-role"
+  cidr_block           = "10.10.0.0/16"
+  subnet_type          = "private"
+  hub_destination_cidr = ["10.11.0.0/16"]
 
 }
 
@@ -20,9 +21,10 @@ provider "aws" {
   }
   region = local.region
 }
+
 module "CT" {
   providers = {
-    aws.networking = aws.networking
+    aws = aws.networking
   }
   source      = "../../"
   name        = local.name
@@ -47,5 +49,8 @@ module "CT" {
   records        = []
 
   ## TGW-HUB
-  hub_destination_cidr = ["10.11.0.0/16"]
+  hub_destination_cidr = local.hub_destination_cidr
+
+  ## VPN
+  vpn_cidr_block = "172.16.0.0/16"
 }

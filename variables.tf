@@ -219,7 +219,7 @@ variable "validation_method" {
 variable "route53_enable" {
   type        = bool
   default     = true
-  description = "Enable subnet to create or not."
+  description = "Enable Route53 to create or not."
 }
 
 variable "private_enabled" {
@@ -244,4 +244,41 @@ variable "records" {
   description = "List of objects of DNS records"
   type        = any
   default     = []
+}
+
+##----------------------------------------------VPN----------------------------------------------------##
+variable "vpn_enable" {
+  type        = bool
+  default     = true
+  description = "Enable vpn to create or not."
+}
+
+variable "split_tunnel_enable" {
+  type        = bool
+  default     = false
+  description = "Indicates whether split-tunnel is enabled on VPN endpoint."
+}
+
+variable "vpn_cidr_block" {
+  type        = string
+  default     = ""
+  description = "Client VPN CIDR"
+}
+
+variable "vpn_route_cidr" {
+  type        = list(any)
+  default     = ["0.0.0.0/0", "0.0.0.0/0", "0.0.0.0/0"]
+  description = "Client Route CIDR"
+}
+
+variable "vpn_network_cidr" {
+  type        = list(any)
+  default     = ["0.0.0.0/0"]
+  description = "Client Network CIDR"
+}
+
+variable "saml_arn" {
+  type        = string
+  default     = ""
+  description = "The ARN of the IAM SAML identity provider. "
 }
