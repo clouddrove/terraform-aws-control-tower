@@ -2,7 +2,7 @@ locals {
   name        = "ct"
   environment = "network"
   region      = "us-east-1"
-  role_arn    = "arn:aws:iam::924144197303:role/identos-test-sw-role"
+  role_arn    = "arn:aws:iam::*****:role/identos-test-sw-role"
 }
 
 provider "aws" {
