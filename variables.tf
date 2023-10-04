@@ -64,44 +64,10 @@ variable "subnet_type" {
 }
 
 ##----------------------------------------------SECURITY-GROUP----------------------------------------------------##
-variable "ssh_ingress_allow_ip" {
-  type        = list(string)
-  default     = [""]
+variable "ssh_allow_ip" {
+  type        = string
+  default     = ""
   description = "List of IP's to allowed for http_https traffic"
-}
-
-variable "http_https_ingress_allow_ip" {
-  type        = list(string)
-  default     = [""]
-  description = "List of IP's to allowed for http_https traffic"
-}
-
-variable "ssh_egress_rule" {
-  type = any
-  default = [{
-    rule_count       = 1
-    from_port        = 0
-    protocol         = "-1"
-    to_port          = 0
-    cidr_blocks      = ["0.0.0.0/0"]
-    ipv6_cidr_blocks = ["::/0"]
-    description      = "Allow all traffic."
-  }]
-  description = "Egress rules with only cidr_blockd. Should be used when new security group is been deployed."
-}
-
-variable "http_https_egress_rule" {
-  type = any
-  default = [{
-    rule_count       = 1
-    from_port        = 0
-    protocol         = "-1"
-    to_port          = 0
-    cidr_blocks      = ["0.0.0.0/0"]
-    ipv6_cidr_blocks = ["::/0"]
-    description      = "Allow all traffic."
-  }]
-  description = "Egress rules with only cidr_blockd. Should be used when new security group is been deployed."
 }
 
 ##----------------------------------------------TRANSIT-GATEWAY----------------------------------------------------##
