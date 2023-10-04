@@ -16,4 +16,4 @@ jobs:
         destroy:            false
     secrets:
         AWS_ACCESS_KEY_ID:  ${{ secrets.TEST_AWS_ACCESS_KEY }}
-        AWS_SECRET_ACCESS_KEY: ${{ secrets.TEST_AWS_ACCESS_SECRET_KEY: }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.TEST_AWS_ACCESS_SECRET_KEY }}
