@@ -170,7 +170,7 @@ variable "spoke_destination_cidr" {
 
 variable "transit_gateway_id" {
   type        = string
-  default     = null
+  default     = ""
   description = "The ID of gateway id."
 }
 
