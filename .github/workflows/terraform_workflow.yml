@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 jobs:
   networking:
-    uses: clouddrove/github-shared-workflows/.github/workflows/terraform_workflow.yml@master
+    uses: clouddrove/github-shared-workflows/.github/workflows/terraform_workflow.yml@1.0.6
     with:
         provider:            aws
         working_directory:  '_examples/single-account'
