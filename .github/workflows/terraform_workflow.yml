@@ -10,9 +10,9 @@ jobs:
         provider:            aws
         working_directory:  'terraform/aws/us-east-1/networking/'
         var_file:           "terraform.tfvars"
-        aws_region:         us-east-2
-        approvers:          cloudlovely
-        terraform_version:  1.5.5
+        aws_region:         us-east-1
+        approvers:          d4kverma
+        terraform_version:  1.5.7
         destroy:            false
     secrets:
         AWS_ACCESS_KEY_ID:  ${{ secrets.TEST_AWS_ACCESS_KEY }}
