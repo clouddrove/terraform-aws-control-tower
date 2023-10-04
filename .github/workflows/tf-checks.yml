@@ -9,3 +9,7 @@ jobs:
     uses: clouddrove/github-shared-workflows/.github/workflows/tf-checks.yml@1.0.6
     with:
       working_directory: './_examples/single-account/'
+      aws_credentials: true
+    secrets:
+        AWS_ACCESS_KEY_ID: ${{ secrets.TEST_AWS_ACCESS_KEY }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.TEST_AWS_ACCESS_SECRET_KEY }} 
