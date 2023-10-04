@@ -77,12 +77,6 @@ variable "description" {
   default = "Lambda Function that is triggered by CloudFormation Custom Resource to Enable Amazon Macie by Default"
 }
 
-variable "create_iam_role" {
-  type        = bool
-  default     = true
-  description = "Flag to control creation of iam role and its related resources."
-}
-
 variable "iam_role_arn" {
   type        = string
   default     = null
