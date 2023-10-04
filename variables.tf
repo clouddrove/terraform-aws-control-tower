@@ -116,7 +116,7 @@ variable "resource_share_account_ids" {
 variable "hub_destination_cidr" {
   type        = list(any)
   default     = []
-  description = "The destination CIDR block (VPC 1)."
+  description = "The destination CIDR block (VPC)."
 }
 
 variable "transit_gateway_default_route_table_association" {
@@ -207,9 +207,9 @@ variable "record_enabled" {
 }
 
 variable "records" {
-  description = "List of objects of DNS records"
   type        = any
   default     = []
+  description = "List of objects of DNS records"
 }
 
 ##----------------------------------------------VPN----------------------------------------------------##
