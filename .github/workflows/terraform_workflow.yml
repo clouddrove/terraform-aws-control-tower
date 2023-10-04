@@ -1,14 +1,16 @@
 name: terraform workflow
 permissions: write-all
 on:
-  workflow_dispatch:
+  push:
+    branches: [ master ]
   pull_request:
+  workflow_dispatch:
 jobs:
   networking:
-    uses: clouddrove/github-shared-workflows/.github/workflows/terraform_workflow.yml@m1.0.6
+    uses: clouddrove/github-shared-workflows/.github/workflows/terraform_workflow.yml@master
     with:
         provider:            aws
-        working_directory:  'terraform/aws/us-east-1/networking/'
+        working_directory:  '_examples/single-account'
         var_file:           "terraform.tfvars"
         aws_region:         us-east-1
         approvers:          d4kverma
