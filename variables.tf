@@ -64,6 +64,12 @@ variable "subnet_type" {
 }
 
 ##----------------------------------------------SECURITY-GROUP----------------------------------------------------##
+variable "sg_enable" {
+  type        = bool
+  default     = true
+  description = "Whether or not to enable the entire ACM module or not."
+}
+
 variable "ssh_allow_ip" {
   type        = string
   default     = ""
@@ -169,6 +175,12 @@ variable "transit_gateway_id" {
 }
 
 ##----------------------------------------------ACM----------------------------------------------------##
+variable "acm_enable" {
+  type        = bool
+  default     = true
+  description = "Whether or not to enable the entire ACM module or not."
+}
+
 variable "domain" {
   type        = string
   default     = ""
@@ -202,7 +214,7 @@ variable "public_enabled" {
 
 variable "record_enabled" {
   type        = bool
-  default     = false
+  default     = true
   description = "Whether to create Route53 record set."
 }
 
@@ -247,4 +259,10 @@ variable "saml_arn" {
   type        = string
   default     = ""
   description = "The ARN of the IAM SAML identity provider. "
+}
+
+variable "vpn_organization_name" {
+  type        = string
+  default     = "clouddrove.ca"
+  description = "Name of organization to use in private certificate"
 }

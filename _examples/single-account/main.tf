@@ -2,8 +2,13 @@ locals {
   name        = "ct"
   environment = "network"
   region      = "us-east-1"
-  role_arn    = "arn:aws:iam::*****:role/identos-test-sw-role"
+  role_arn    = "arn:aws:iam::${data.aws_caller_identity.current.id}:role/identos-test-sw-role"
+  cidr_block  = "10.10.0.0/16"
 }
+
+data "aws_caller_identity" "current" {}
+
+
 
 provider "aws" {
   region = local.region
@@ -27,19 +32,18 @@ module "CT" {
   region      = local.region
 
   ## VPC
-  cidr_block = var.cidr_block
+  cidr_block = local.cidr_block
 
   ## SUBNET
   subnet_type = var.subnet_type
 
   ## SECURTIY-GROUP
-  ssh_allow_ip = var.cidr_block
+  ssh_allow_ip = local.cidr_block
 
   ## ACM
   domain = var.domain
 
   ## Route53
-  record_enabled = true
   records        = var.records
 
   ## TGW-HUB

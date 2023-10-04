@@ -38,7 +38,8 @@ module "subnet" {
 module "ssh" {
   source  = "clouddrove/security-group/aws"
   version = "2.0.0"
-
+  
+  enable              = var.sg_enable
   name                = "${var.name}-ssh"
   environment         = var.environment
   vpc_id              = module.vpc.vpc_id
@@ -123,20 +124,21 @@ module "tgw_spoke" {
   }
 }
 
-##----------------------------------------------ACM----------------------------------------------------##
+#----------------------------------------------ACM----------------------------------------------------##
 module "acm" {
   source  = "clouddrove/acm/aws"
   version = "1.4.1"
 
   name        = var.name
   environment = var.environment
-
+  
+  enable                    = var.acm_enable
   domain_name               = var.domain
   validation_method         = var.validation_method
   subject_alternative_names = ["*.${var.domain}", "www.${var.domain}"]
 }
 
-##----------------------------------------------ROUTE53----------------------------------------------------##
+#----------------------------------------------ROUTE53----------------------------------------------------##
 module "route53" {
   source  = "clouddrove/route53/aws"
   version = "1.0.2"
@@ -153,7 +155,7 @@ module "route53" {
   vpc_id         = module.vpc.vpc_id
 }
 
-##----------------------------------------------VPN----------------------------------------------------##
+#----------------------------------------------VPN----------------------------------------------------##
 module "vpn" {
   source  = "clouddrove/client-vpn/aws"
   version = "1.0.7"
@@ -168,5 +170,7 @@ module "vpn" {
   route_cidr          = var.vpn_route_cidr
   route_subnet_ids    = module.subnet.private_subnet_id
   network_cidr        = var.vpn_network_cidr
+  organization_name   = var.vpn_organization_name
+  dns_names           = [var.domain]
   saml_arn            = var.saml_arn
 }
