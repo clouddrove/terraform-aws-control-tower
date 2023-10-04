@@ -44,7 +44,7 @@ module "CT" {
   domain = var.domain
 
   ## Route53
-  records        = var.records
+  records = var.records
 
   ## TGW-HUB
   hub_destination_cidr = var.hub_destination_cidr

@@ -38,7 +38,7 @@ module "subnet" {
 module "ssh" {
   source  = "clouddrove/security-group/aws"
   version = "2.0.0"
-  
+
   enable              = var.sg_enable
   name                = "${var.name}-ssh"
   environment         = var.environment
@@ -131,7 +131,7 @@ module "acm" {
 
   name        = var.name
   environment = var.environment
-  
+
   enable                    = var.acm_enable
   domain_name               = var.domain
   validation_method         = var.validation_method
