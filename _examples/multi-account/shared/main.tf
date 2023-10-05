@@ -2,7 +2,7 @@ locals {
   name        = "ct"
   environment = "shared"
   region      = "us-east-1"
-  role_arn    = "arn:aws:iam::*****:role/CT-shared-test-sw" # Provide shared account role ARN
+  role_arn    = "arn:aws:iam::${data.aws_caller_identity.current.id}:role/CT-networking-test-sw" # Provide shared account role ARN
   cidr_block  = "10.11.0.0/16"
 }
 

@@ -2,7 +2,7 @@ locals {
   name        = "ct"
   environment = "dev"
   region      = "us-east-1"
-  role_arn    = "arn:aws:iam::******:role/CT-dev-test-sw" #Provide dev account role ARN
+  role_arn    = "arn:aws:iam::${data.aws_caller_identity.current.id}:role/CT-networking-test-sw" #Provide dev account role ARN
   cidr_block  = "10.12.0.0/16"
 }
 

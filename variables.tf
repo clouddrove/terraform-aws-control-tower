@@ -76,6 +76,7 @@ variable "single_nat_gateway" {
 }
 
 variable "public_inbound_acl_rules" {
+  type        = any
   default = [
     {
       rule_number = 100
@@ -93,9 +94,11 @@ variable "public_inbound_acl_rules" {
       protocol        = "-1"
       ipv6_cidr_block = "::/0"
   }]
+  description = "Public subnets inbound network ACLs"
 }
 
 variable "public_outbound_acl_rules" {
+  type        = any
   default = [
     {
       rule_number = 100
@@ -113,9 +116,11 @@ variable "public_outbound_acl_rules" {
       protocol        = "-1"
       ipv6_cidr_block = "::/0"
   }]
+  description = "Public subnets outbound network ACLs"
 }
 
 variable "private_inbound_acl_rules" {
+  type        = any
   default = [
     {
       rule_number = 100
@@ -133,9 +138,11 @@ variable "private_inbound_acl_rules" {
       protocol        = "-1"
       ipv6_cidr_block = "::/0"
   }]
+  description = "Private subnets inbound network ACLs"
 }
 
 variable "private_outbound_acl_rules" {
+  type        = any
   default = [
     {
       rule_number = 100
@@ -153,6 +160,7 @@ variable "private_outbound_acl_rules" {
       protocol        = "-1"
       ipv6_cidr_block = "::/0"
   }]
+  description = "Private subnets outbound network ACLs"
 }
 
 ##----------------------------------------------SECURITY-GROUP----------------------------------------------------##
