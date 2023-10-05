@@ -1,14 +1,12 @@
 locals {
   name        = "ct"
-  environment = "network"
+  environment = "networking"
   region      = "us-east-1"
-  role_arn    = "arn:aws:iam::${data.aws_caller_identity.current.id}:role/identos-test-sw-role"
+  role_arn    = "arn:aws:iam::${data.aws_caller_identity.current.id}:role/CT-networking-test-sw"
   cidr_block  = "10.10.0.0/16"
 }
 
 data "aws_caller_identity" "current" {}
-
-
 
 provider "aws" {
   region = local.region
@@ -35,7 +33,9 @@ module "CT" {
   cidr_block = local.cidr_block
 
   ## SUBNET
-  subnet_type = var.subnet_type
+  subnet_type         = var.subnet_type
+  nat_gateway_enabled = var.nat_gateway_enabled
+  single_nat_gateway  = var.single_nat_gateway
 
   ## SECURTIY-GROUP
   ssh_allow_ip = local.cidr_block
@@ -47,8 +47,11 @@ module "CT" {
   records = var.records
 
   ## TGW-HUB
-  hub_destination_cidr = var.hub_destination_cidr
+  tgw_hub_enable             = var.tgw_hub_enable
+  hub_destination_cidr       = var.hub_destination_cidr
+  resource_share_account_ids = var.resource_share_account_ids
 
   ## VPN
+  vpn_enable     = var.vpn_enable
   vpn_cidr_block = var.vpn_cidr_block
 }

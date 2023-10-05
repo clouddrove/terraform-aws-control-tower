@@ -63,6 +63,98 @@ variable "subnet_type" {
   description = "Type of subnets to create (`private` or `public`)."
 }
 
+variable "nat_gateway_enabled" {
+  type        = bool
+  default     = false
+  description = "Flag to enable/disable NAT Gateways creation in public subnets."
+}
+
+variable "single_nat_gateway" {
+  type        = bool
+  default     = false
+  description = "Enable for only single NAT Gateway in one Availability Zone"
+}
+
+variable "public_inbound_acl_rules" {
+  default = [
+    {
+      rule_number = 100
+      rule_action = "allow"
+      from_port   = 0
+      to_port     = 0
+      protocol    = "-1"
+      cidr_block  = "0.0.0.0/0"
+    },
+    {
+      rule_number     = 101
+      rule_action     = "allow"
+      from_port       = 0
+      to_port         = 0
+      protocol        = "-1"
+      ipv6_cidr_block = "::/0"
+  }]
+}
+
+variable "public_outbound_acl_rules" {
+  default = [
+    {
+      rule_number = 100
+      rule_action = "allow"
+      from_port   = 0
+      to_port     = 0
+      protocol    = "-1"
+      cidr_block  = "0.0.0.0/0"
+    },
+    {
+      rule_number     = 101
+      rule_action     = "allow"
+      from_port       = 0
+      to_port         = 0
+      protocol        = "-1"
+      ipv6_cidr_block = "::/0"
+  }]
+}
+
+variable "private_inbound_acl_rules" {
+  default = [
+    {
+      rule_number = 100
+      rule_action = "allow"
+      from_port   = 0
+      to_port     = 0
+      protocol    = "-1"
+      cidr_block  = "0.0.0.0/0"
+    },
+    {
+      rule_number     = 101
+      rule_action     = "allow"
+      from_port       = 0
+      to_port         = 0
+      protocol        = "-1"
+      ipv6_cidr_block = "::/0"
+  }]
+}
+
+variable "private_outbound_acl_rules" {
+  default = [
+    {
+      rule_number = 100
+      rule_action = "allow"
+      from_port   = 0
+      to_port     = 0
+      protocol    = "-1"
+      cidr_block  = "0.0.0.0/0"
+    },
+    {
+      rule_number     = 101
+      rule_action     = "allow"
+      from_port       = 0
+      to_port         = 0
+      protocol        = "-1"
+      ipv6_cidr_block = "::/0"
+  }]
+}
+
 ##----------------------------------------------SECURITY-GROUP----------------------------------------------------##
 variable "sg_enable" {
   type        = bool
@@ -79,7 +171,7 @@ variable "ssh_allow_ip" {
 ##----------------------------------------------TRANSIT-GATEWAY----------------------------------------------------##
 variable "tgw_hub_enable" {
   type        = bool
-  default     = true
+  default     = false
   description = "Enable subnet to create or not."
 }
 
@@ -97,7 +189,7 @@ variable "hub_auto_accept_shared_attachments" {
 
 variable "description" {
   type        = string
-  default     = ""
+  default     = "This transit Gateway is created for centerlised vpc peering"
   description = "This transit Gateway is created for centerlised vpc peering"
 }
 
@@ -227,7 +319,7 @@ variable "records" {
 ##----------------------------------------------VPN----------------------------------------------------##
 variable "vpn_enable" {
   type        = bool
-  default     = true
+  default     = false
   description = "Enable vpn to create or not."
 }
 

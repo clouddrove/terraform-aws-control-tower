@@ -24,14 +24,20 @@ module "subnet" {
   source  = "clouddrove/subnet/aws"
   version = "2.0.0"
 
-  enable             = var.subnet_enable
-  name               = var.name
-  environment        = var.environment
-  availability_zones = ["${var.region}a", "${var.region}b", "${var.region}c"]
-  vpc_id             = module.vpc.vpc_id
-  type               = var.subnet_type
-  igw_id             = module.vpc.igw_id
-  cidr_block         = module.vpc.vpc_cidr_block
+  enable                     = var.subnet_enable
+  name                       = var.name
+  environment                = var.environment
+  nat_gateway_enabled        = var.nat_gateway_enabled
+  single_nat_gateway         = var.single_nat_gateway
+  availability_zones         = ["${var.region}a", "${var.region}b", "${var.region}c"]
+  vpc_id                     = module.vpc.vpc_id
+  type                       = var.subnet_type
+  igw_id                     = module.vpc.igw_id
+  cidr_block                 = module.vpc.vpc_cidr_block
+  public_inbound_acl_rules   = var.public_inbound_acl_rules
+  public_outbound_acl_rules  = var.public_outbound_acl_rules
+  private_inbound_acl_rules  = var.private_inbound_acl_rules
+  private_outbound_acl_rules = var.private_outbound_acl_rules
 }
 
 ##----------------------------------------------SECURITY-GROUP----------------------------------------------------##
@@ -111,14 +117,14 @@ module "tgw_spoke" {
   aws_ram_resource_share_accepter = var.aws_ram_resource_share_accepter
   resource_share_arn              = var.resource_share_arn
   # VPC Attachements
-  transit_gateway_id = "tgw-gdfeffdsfdsfdf" #var.transit_gateway_id
+  transit_gateway_id = var.transit_gateway_id
   vpc_attachments = {
     vpc1 = {
       vpc_id                                          = module.vpc.vpc_id
       subnet_ids                                      = module.subnet.private_subnet_id
       transit_gateway_default_route_table_association = var.transit_gateway_default_route_table_association
       transit_gateway_default_route_table_propagation = var.transit_gateway_default_route_table_propagation
-      vpc_route_table_ids                             = module.subnet.public_route_tables_id
+      vpc_route_table_ids                             = module.subnet.private_route_tables_id
       destination_cidr                                = var.spoke_destination_cidr
     }
   }
