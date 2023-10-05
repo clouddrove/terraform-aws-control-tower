@@ -76,7 +76,7 @@ variable "single_nat_gateway" {
 }
 
 variable "public_inbound_acl_rules" {
-  type        = any
+  type = any
   default = [
     {
       rule_number = 100
@@ -98,7 +98,7 @@ variable "public_inbound_acl_rules" {
 }
 
 variable "public_outbound_acl_rules" {
-  type        = any
+  type = any
   default = [
     {
       rule_number = 100
@@ -120,7 +120,7 @@ variable "public_outbound_acl_rules" {
 }
 
 variable "private_inbound_acl_rules" {
-  type        = any
+  type = any
   default = [
     {
       rule_number = 100
@@ -142,7 +142,7 @@ variable "private_inbound_acl_rules" {
 }
 
 variable "private_outbound_acl_rules" {
-  type        = any
+  type = any
   default = [
     {
       rule_number = 100
