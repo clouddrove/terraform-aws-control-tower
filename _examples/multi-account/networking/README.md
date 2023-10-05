@@ -1,3 +1,3 @@
-## examples/complete
+## examples/basic
 
-An example which shows _complete_ usage of the module.
+An example which shows _basic_ usage of the module.

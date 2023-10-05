@@ -2,12 +2,11 @@ locals {
   name        = "ct"
   environment = "networking"
   region      = "us-east-1"
-  domain      = "identos.ca"
-  role_arn    = "arn:aws:iam::123456789012:role/role-name"
-  cidr_block  = "10.0.10.0/16"
-  subnet_type = private
-
+  role_arn    = "arn:aws:iam::${data.aws_caller_identity.current.id}:role/CT-networking-test-sw"
+  cidr_block  = "10.10.0.0/16"
 }
+
+data "aws_caller_identity" "current" {}
 
 provider "aws" {
   region = local.region
@@ -20,22 +19,39 @@ provider "aws" {
   }
   region = local.region
 }
+
 module "CT" {
+  providers = {
+    aws = aws.networking
+  }
   source      = "../../"
   name        = local.name
   environment = local.environment
+  region      = local.region
 
-  cidr_block  = local.cidr_block
-  subnet_type = local.subnet_type
+  ## VPC
+  cidr_block = local.cidr_block
+
+  ## SUBNET
+  subnet_type         = var.subnet_type
+  nat_gateway_enabled = var.nat_gateway_enabled
+  single_nat_gateway  = var.single_nat_gateway
+
+  ## SECURTIY-GROUP
+  ssh_allow_ip = local.cidr_block
 
   ## ACM
-  domain_name = local.domain
-}
+  domain = var.domain
 
-## Route53
-record_enabled = true
-public_enabled = true
-records = [
-  {},
-  {},
-]
+  ## Route53
+  records = var.records
+
+  ## TGW-HUB
+  tgw_hub_enable             = var.tgw_hub_enable
+  hub_destination_cidr       = var.hub_destination_cidr
+  resource_share_account_ids = var.resource_share_account_ids
+
+  ## VPN
+  vpn_enable     = var.vpn_enable
+  vpn_cidr_block = var.vpn_cidr_block
+}

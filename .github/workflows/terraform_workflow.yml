@@ -1,0 +1,21 @@
+name: terraform workflow
+permissions: write-all
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+  workflow_dispatch:
+jobs:
+  networking:
+    uses: clouddrove/github-shared-workflows/.github/workflows/terraform_workflow.yml@1.0.6
+    with:
+        provider:            aws
+        working_directory:  '_examples/single-account'
+        var_file:           "terraform.tfvars"
+        aws_region:         us-east-1
+        approvers:          d4kverma
+        terraform_version:  1.5.7
+        destroy:            false
+    secrets:
+        AWS_ACCESS_KEY_ID:  ${{ secrets.TEST_AWS_ACCESS_KEY }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.TEST_AWS_ACCESS_SECRET_KEY }}
