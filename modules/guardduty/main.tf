@@ -1,22 +1,5 @@
-provider "aws" {
-  region = var.region
-}
-
-#Module      : label
-#Description : This terraform module is designed to generate consistent label names and tags
-#              for resources. You can use terraform-labels to implement a strict naming
-#              convention.
-module "labels" {
-  source  = "clouddrove/labels/aws"
-  version = "1.3.0"
-
-  name        = var.name
-  repository  = var.repository
-  environment = var.environment
-  managedby   = var.managedby
-  attributes  = var.attributes
-  label_order = var.label_order
-}
+data "aws_partition" "current" {}
+data "aws_region" "current" {}
 
 # Create IAM Role for GuardDuty Enabler
 module "iam-role" {
@@ -57,26 +40,26 @@ data "aws_iam_policy_document" "iam-policy" {
     condition {
       test     = "StringEquals"
       variable = "aws:PrincipalOrgId"
-      values   = [var.organization_id]
+      values   = ["${var.organization_id}"]
     }
   }
 
   statement {
     effect    = "Allow"
     actions   = ["sts:AssumeRole"]
-    resources = ["arn:${var.aws_partition}:iam::*:role/${var.assume_role}"]
+    resources = ["arn:${data.aws_partition.current.partition}:iam::*:role/${var.assume_role}"]
     condition {
       test     = "StringEquals"
       variable = "aws:PrincipalOrgId"
-      values   = [var.organization_id]
+      values   = ["${var.organization_id}"]
     }
   }
 
-  statement {
-    effect    = "Allow"
-    actions   = ["sns:Publish"]
-    resources = [module.guardduty_enabler_topic.arn]
-  }
+  # statement {
+  #   effect    = "Allow"
+  #   actions   = ["sns:Publish"]
+  #   resources = [module.guardduty_enabler_topic.arn]
+  # }
 
   statement {
     effect = "Allow"
@@ -85,14 +68,14 @@ data "aws_iam_policy_document" "iam-policy" {
       "logs:CreateLogStream",
       "logs:PutLogEvents",
     ]
-    resources = ["arn:${var.aws_partition}:logs:${var.region}:${var.aws_account_id}:log-group:/aws/lambda/*"]
+    resources = ["arn:${data.aws_partition.current.partition}:logs:${data.aws_region.current.name}:${var.control_tower_management_account}:log-group:/aws/lambda/*"]
   }
 
-  statement {
-    effect    = "Allow"
-    actions   = ["CloudFormation:ListStackInstances"]
-    resources = ["arn:${var.aws_partition}:cloudformation:${var.region}:${var.aws_account_id}:stackset/AWSControlTowerBP-BASELINE-CLOUDWATCH:*"]
-  }
+  # # statement {
+  # #   effect    = "Allow"
+  # #   actions   = ["CloudFormation:ListStackInstances"]
+  # #   resources = ["arn:${data.aws_partition.current.partition}:cloudformation:${data.aws_region.current.name}:${var.control_tower_management_account}:stackset/AWSControlTowerBP-BASELINE-CLOUDWATCH:*"]
+  # # }
 
   statement {
     effect = "Allow"
@@ -106,7 +89,7 @@ data "aws_iam_policy_document" "iam-policy" {
   statement {
     effect    = "Allow"
     actions   = ["sts:AssumeRole"]
-    resources = ["arn:${var.aws_partition}:iam::*:role/${var.assume_role}"]
+    resources = ["arn:${data.aws_partition.current.partition}:iam::*:role/${var.assume_role}"]
   }
 
   statement {
@@ -129,23 +112,26 @@ data "aws_iam_policy_document" "iam-policy" {
 
 # Create Lambda Function for GuardDuty Enabler
 module "lambda_enable_guardduty" {
-  source     = "git@github.com:clouddrove/terraform-aws-lambda?ref=feat/issue_276_a"
-  depends_on = [module.iam-role]
-
-  name          = var.name
-  environment   = var.environment
-  enable        = var.enable
-  runtime       = var.runtime
-  handler       = var.handler
-  filename      = var.filename
-  create_layers = var.create_layers
-  iam_role_arn  = module.iam-role.arn
+  source                            = "git@github.com:clouddrove/terraform-aws-lambda?ref=feat/issue_276_a"
+  depends_on                        = [module.iam-role]
+  cloudwatch_logs_retention_in_days = 7
+  create_iam_role                   = false
+  subnet_ids                        = null
+  name                              = var.name
+  environment                       = var.environment
+  enable                            = var.enable
+  runtime                           = var.runtime
+  handler                           = var.handler
+  filename                          = var.filename
+  create_layers                     = var.create_layers
+  iam_role_arn                      = module.iam-role.arn
+  reserved_concurrent_executions    = null
   variables = {
     assume_role     = var.assume_role
     region_filter   = var.region_filter
-    ct_root_account = var.aws_account_id
+    ct_root_account = var.control_tower_management_account
     admin_account   = var.security_account_id
-    topic           = var.sns_name
+    topic           = "test-guarddutyenablertopic"
     log_level       = "ERROR"
   }
 

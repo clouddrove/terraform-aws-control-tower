@@ -1,6 +1,4 @@
-variable "region" {
-  default = "us-east-1"
-}
+
 
 #Module      : LABEL
 #Description : Terraform label module variables
@@ -12,7 +10,7 @@ variable "name" {
 
 variable "repository" {
   type        = string
-  default     = "https://github.com/clouddrove/terraform-aws-lambda"
+  default     = null
   description = "Terraform current module repo"
 }
 
@@ -36,8 +34,8 @@ variable "attributes" {
 
 variable "managedby" {
   type        = string
-  default     = "hello@clouddrove.com"
-  description = "ManagedBy, eg 'CloudDrove'."
+  default     = "test"
+  description = "ManagedBy,"
 }
 
 variable "enable" {
@@ -64,9 +62,9 @@ variable "assume_role" {
   description = "What role should be assumed in accounts to enable GuardDuty? The Default is AWSControlTowerExecution for a Control Tower environment."
 }
 
-variable "aws_account_id" {
+variable "control_tower_management_account" {
   type    = string
-  default = ""
+  default = null
 }
 
 variable "security_account_id" {
@@ -116,7 +114,7 @@ variable "principals" {
 
 variable "filename" {
   type        = string
-  default     = "./code/guardduty_enabler.zip"
+  default     = "../code/guardduty_enabler.zip"
   description = "The path to the function's deployment package within the local filesystem. If defined, The s3_-prefixed options cannot be used."
 }
 
