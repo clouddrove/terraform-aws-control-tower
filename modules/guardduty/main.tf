@@ -132,24 +132,27 @@ module "lambda_enable_guardduty" {
   source     = "git@github.com:clouddrove/terraform-aws-lambda?ref=feat/issue_276_a"
   depends_on = [module.iam-role]
 
-  name         = var.name
-  environment  = var.environment
-  enable       = var.enable
-  runtime      = var.runtime
-  handler      = var.lambda_handler
-  memory_size  = var.memory_size
-  timeout      = var.timeout
-  filename     = var.filename
-  iam_role_arn = module.iam-role.arn
-  variables    = var.variables
-  s3_buckets   = var.s3_buckets
-  s3_keies     = var.s3_keies
+  name          = var.name
+  environment   = var.environment
+  enable        = var.enable
+  runtime       = var.runtime
+  handler       = var.handler
+  filename      = var.filename
+  create_layers = var.create_layers
+  iam_role_arn  = module.iam-role.arn
+  variables = {
+    assume_role     = var.assume_role
+    region_filter   = var.region_filter
+    ct_root_account = var.aws_account_id
+    admin_account   = var.security_account_id
+    topic           = var.sns_name
+    log_level       = "ERROR"
+  }
 
   # lambda permission
-  statement_ids = var.statement_ids
-  actions       = var.actions
-  principals    = var.principals
-  source_arns   = [module.guardduty_enabler_topic.arn, aws_cloudwatch_event_rule.life_cycle_rule_guardduty.arn, aws_cloudwatch_event_rule.schedule_rule_guardduty.arn]
+  actions     = var.actions
+  principals  = var.principals
+  source_arns = [module.guardduty_enabler_topic.id, aws_cloudwatch_event_rule.life_cycle_rule_guardduty.arn, aws_cloudwatch_event_rule.schedule_rule_guardduty.arn]
 }
 
 # Create SNS Topic for GuardDuty Enabler and  Subscribe Lambda to it
