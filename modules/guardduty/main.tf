@@ -10,7 +10,7 @@ module "iam-role" {
   label_order        = var.label_order
   enabled            = var.enabled
   assume_role_policy = data.aws_iam_policy_document.default.json
-  policy_enabled     = true
+  policy_enabled     = var.policy_enabled
   policy             = data.aws_iam_policy_document.iam-policy.json
 
   tags = {
@@ -55,11 +55,11 @@ data "aws_iam_policy_document" "iam-policy" {
     }
   }
 
-  # statement {
-  #   effect    = "Allow"
-  #   actions   = ["sns:Publish"]
-  #   resources = [module.guardduty_enabler_topic.arn]
-  # }
+  statement {
+    effect    = "Allow"
+    actions   = ["sns:Publish"]
+    resources = ["arn:aws:sns:${data.aws_region.current.name}:${var.control_tower_management_account}:test-${var.topic_name}"]
+  }
 
   statement {
     effect = "Allow"
@@ -71,11 +71,11 @@ data "aws_iam_policy_document" "iam-policy" {
     resources = ["arn:${data.aws_partition.current.partition}:logs:${data.aws_region.current.name}:${var.control_tower_management_account}:log-group:/aws/lambda/*"]
   }
 
-  # # statement {
-  # #   effect    = "Allow"
-  # #   actions   = ["CloudFormation:ListStackInstances"]
-  # #   resources = ["arn:${data.aws_partition.current.partition}:cloudformation:${data.aws_region.current.name}:${var.control_tower_management_account}:stackset/AWSControlTowerBP-BASELINE-CLOUDWATCH:*"]
-  # # }
+  statement {
+    effect    = "Allow"
+    actions   = ["CloudFormation:ListStackInstances"]
+    resources = ["arn:${data.aws_partition.current.partition}:cloudformation:${data.aws_region.current.name}:${var.control_tower_management_account}:stackset/AWSControlTowerBP-BASELINE-CLOUDWATCH:*"]
+  }
 
   statement {
     effect = "Allow"
@@ -115,30 +115,31 @@ module "lambda_enable_guardduty" {
   source                            = "git@github.com:clouddrove/terraform-aws-lambda?ref=feat/issue_276_a"
   depends_on                        = [module.iam-role]
   cloudwatch_logs_retention_in_days = 7
-  create_iam_role                   = false
-  subnet_ids                        = null
+  create_iam_role                   = var.create_iam_role
+  subnet_ids                        = var.subnet_ids
   name                              = var.name
   environment                       = var.environment
   enable                            = var.enable
   runtime                           = var.runtime
   handler                           = var.handler
   filename                          = var.filename
+  timeout                           = var.timeout
   create_layers                     = var.create_layers
   iam_role_arn                      = module.iam-role.arn
-  reserved_concurrent_executions    = null
+  reserved_concurrent_executions    = var.reserved_concurrent_executions
   variables = {
     assume_role     = var.assume_role
     region_filter   = var.region_filter
     ct_root_account = var.control_tower_management_account
     admin_account   = var.security_account_id
-    topic           = "test-guarddutyenablertopic"
+    topic           = "arn:aws:sns:${data.aws_region.current.name}:${var.control_tower_management_account}:test-${var.topic_name}"
     log_level       = "ERROR"
   }
 
   # lambda permission
   actions     = var.actions
   principals  = var.principals
-  source_arns = [module.guardduty_enabler_topic.id, aws_cloudwatch_event_rule.life_cycle_rule_guardduty.arn, aws_cloudwatch_event_rule.schedule_rule_guardduty.arn]
+  source_arns = [module.guardduty_enabler_topic.topic-arn, aws_cloudwatch_event_rule.life_cycle_rule_guardduty.arn, aws_cloudwatch_event_rule.schedule_rule_guardduty.arn]
 }
 
 # Create SNS Topic for GuardDuty Enabler and  Subscribe Lambda to it
@@ -155,15 +156,23 @@ module "guardduty_enabler_topic" {
   topic_name   = var.topic_name
 
   # subscription    
-  enable_subscription = var.enable_subscription
-  endpoint            = module.lambda_enable_guardduty.arn
-  protocol            = var.protocol
+  subscribers = {
+    lambda-subscriber = {
+      protocol                        = var.protocol
+      endpoint                        = module.lambda_enable_guardduty.arn
+      endpoint_auto_confirms          = var.endpoint_auto_confirms
+      raw_message_delivery            = var.raw_message_delivery
+      filter_policy                   = var.filter_policy
+      delivery_policy                 = var.delivery_policy
+      confirmation_timeout_in_minutes = var.confirmation_timeout_in_minutes
+    }
+  }
 }
 
 # Create Lifecycle Rule for GuardDuty
 resource "aws_cloudwatch_event_rule" "life_cycle_rule_guardduty" {
-  name        = "amazon-guardduty-lifecycle"
-  description = "Amazon GuardDuty LifeCycle Trigger"
+  name        = var.life_cycle_rule_name
+  description = var.life_cycle_rule_description
 
   event_pattern = jsonencode({
     source      = ["aws.controltower"],
@@ -184,8 +193,8 @@ resource "aws_cloudwatch_event_target" "lambda_target_lifecycle" {
 
 # Create Scheduled Rule for GuardDuty
 resource "aws_cloudwatch_event_rule" "schedule_rule_guardduty" {
-  name                = "amazon-guardduty-schedule-compliance"
-  description         = "Amazon GuardDuty Schedule Compliance Trigger"
+  name                = var.schedule_rule_name
+  description         = var.schedule_rule_description
   schedule_expression = "rate(${var.compliance_frequency} minutes)"
 
   is_enabled = true
@@ -195,4 +204,34 @@ resource "aws_cloudwatch_event_target" "lambda_target_schedule" {
   rule      = aws_cloudwatch_event_rule.schedule_rule_guardduty.name
   target_id = "DailyInvite"
   arn       = module.lambda_enable_guardduty.arn
+}
+
+# Registering Security Account as a delegated administrator
+# resource "aws_organizations_delegated_administrator" "guardduty_delegation" {
+#   # depends_on        = [null_resource.guardduty_delegation]
+#   account_id        = var.security_account_id
+#   service_principal = "principal"
+# }
+
+# resource "null_resource" "guardduty_delegation" {
+#   provisioner "local-exec" {
+#     command = "sleep 120" # Sleep for 2 minutes (120 seconds)
+#   }
+#   depends_on = [module.lambda_enable_guardduty]
+# }
+
+# Publish a JSON message to the SNS Topic
+resource "null_resource" "publish_guardduty_message" {
+  triggers = {
+    # Use a random value as a trigger to force this resource to run when you want to publish a message
+    sns_topic_arn = module.guardduty_enabler_topic.topic-arn
+  }
+
+  depends_on = [module.guardduty_enabler_topic.lambda_subscription]
+
+  provisioner "local-exec" {
+    command = <<EOT
+      aws sns publish --topic-arn "${module.guardduty_enabler_topic.topic-arn}" --message '{"default": "A message.", "AccountID": "${var.control_tower_management_account}", "Email": "test@gmail.com"}' --region "${data.aws_region.current.name}" --message-structure json
+    EOT
+  }
 }
