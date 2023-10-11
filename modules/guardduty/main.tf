@@ -3,15 +3,16 @@ data "aws_region" "current" {}
 
 # Create IAM Role for GuardDuty Enabler
 module "iam-role" {
-  source             = "clouddrove/iam-role/aws"
-  version            = "1.3.0"
+  source  = "clouddrove/iam-role/aws"
+  version = "1.3.0"
+
+  enabled            = var.enable_guardduty
   name               = var.role_name
   environment        = var.environment
   label_order        = var.label_order
-  enabled            = var.enabled
-  assume_role_policy = data.aws_iam_policy_document.default.json
+  assume_role_policy = data.aws_iam_policy_document.default[0].json
   policy_enabled     = var.policy_enabled
-  policy             = data.aws_iam_policy_document.iam-policy.json
+  policy             = data.aws_iam_policy_document.iam-policy[0].json
 
   tags = {
     Name = var.role_name
@@ -19,6 +20,7 @@ module "iam-role" {
 }
 
 data "aws_iam_policy_document" "default" {
+  count = var.enable_guardduty ? 1 : 0
   statement {
     effect  = "Allow"
     actions = ["sts:AssumeRole"]
@@ -30,6 +32,7 @@ data "aws_iam_policy_document" "default" {
 }
 
 data "aws_iam_policy_document" "iam-policy" {
+  count = var.enable_guardduty ? 1 : 0
   statement {
     effect = "Allow"
     actions = [
@@ -58,7 +61,7 @@ data "aws_iam_policy_document" "iam-policy" {
   statement {
     effect    = "Allow"
     actions   = ["sns:Publish"]
-    resources = ["arn:aws:sns:${data.aws_region.current.name}:${var.control_tower_management_account}:test-${var.topic_name}"]
+    resources = ["arn:aws:sns:${data.aws_region.current.name}:${var.control_tower_management_account}:${var.name}-${var.environment}"]
   }
 
   statement {
@@ -112,14 +115,15 @@ data "aws_iam_policy_document" "iam-policy" {
 
 # Create Lambda Function for GuardDuty Enabler
 module "lambda_enable_guardduty" {
-  source                            = "git@github.com:clouddrove/terraform-aws-lambda?ref=feat/issue_276_a"
+  source = "git@github.com:clouddrove/terraform-aws-lambda?ref=feat/issue_276_a"
+
+  enable                            = var.enable_guardduty
   depends_on                        = [module.iam-role]
   cloudwatch_logs_retention_in_days = 7
   create_iam_role                   = var.create_iam_role
   subnet_ids                        = var.subnet_ids
   name                              = var.name
   environment                       = var.environment
-  enable                            = var.enable
   runtime                           = var.runtime
   handler                           = var.handler
   filename                          = var.filename
@@ -132,14 +136,14 @@ module "lambda_enable_guardduty" {
     region_filter   = var.region_filter
     ct_root_account = var.control_tower_management_account
     admin_account   = var.security_account_id
-    topic           = "arn:aws:sns:${data.aws_region.current.name}:${var.control_tower_management_account}:test-${var.topic_name}"
+    topic           = "arn:aws:sns:${data.aws_region.current.name}:${var.control_tower_management_account}:${var.name}-${var.environment}"
     log_level       = "ERROR"
   }
 
   # lambda permission
   actions     = var.actions
   principals  = var.principals
-  source_arns = [module.guardduty_enabler_topic.topic-arn, aws_cloudwatch_event_rule.life_cycle_rule_guardduty.arn, aws_cloudwatch_event_rule.schedule_rule_guardduty.arn]
+  source_arns = [module.guardduty_enabler_topic.topic-arn, aws_cloudwatch_event_rule.life_cycle_rule_guardduty[0].arn, aws_cloudwatch_event_rule.schedule_rule_guardduty[0].arn]
 }
 
 # Create SNS Topic for GuardDuty Enabler and  Subscribe Lambda to it
@@ -147,13 +151,12 @@ module "guardduty_enabler_topic" {
   source  = "clouddrove/sns/aws"
   version = "1.3.0"
 
-  name         = var.sns_name
+  enabled      = var.enable_guardduty
+  name         = var.name
   environment  = var.environment
-  enabled      = var.enabled
-  enable_sns   = var.enable_sns
+  label_order  = var.label_order
   enable_topic = var.enable_topic
   display_name = var.display_name
-  topic_name   = var.topic_name
 
   # subscription    
   subscribers = {
@@ -171,6 +174,7 @@ module "guardduty_enabler_topic" {
 
 # Create Lifecycle Rule for GuardDuty
 resource "aws_cloudwatch_event_rule" "life_cycle_rule_guardduty" {
+  count       = var.enable_guardduty ? 1 : 0
   name        = var.life_cycle_rule_name
   description = var.life_cycle_rule_description
 
@@ -186,13 +190,15 @@ resource "aws_cloudwatch_event_rule" "life_cycle_rule_guardduty" {
 }
 
 resource "aws_cloudwatch_event_target" "lambda_target_lifecycle" {
-  rule      = aws_cloudwatch_event_rule.life_cycle_rule_guardduty.name
+  count     = var.enable_guardduty ? 1 : 0
+  rule      = aws_cloudwatch_event_rule.life_cycle_rule_guardduty[0].name
   target_id = "DailyInvite"
   arn       = module.lambda_enable_guardduty.arn
 }
 
 # Create Scheduled Rule for GuardDuty
 resource "aws_cloudwatch_event_rule" "schedule_rule_guardduty" {
+  count               = var.enable_guardduty ? 1 : 0
   name                = var.schedule_rule_name
   description         = var.schedule_rule_description
   schedule_expression = "rate(${var.compliance_frequency} minutes)"
@@ -201,24 +207,11 @@ resource "aws_cloudwatch_event_rule" "schedule_rule_guardduty" {
 }
 
 resource "aws_cloudwatch_event_target" "lambda_target_schedule" {
-  rule      = aws_cloudwatch_event_rule.schedule_rule_guardduty.name
+  count     = var.enable_guardduty ? 1 : 0
+  rule      = aws_cloudwatch_event_rule.schedule_rule_guardduty[0].name
   target_id = "DailyInvite"
   arn       = module.lambda_enable_guardduty.arn
 }
-
-# Registering Security Account as a delegated administrator
-# resource "aws_organizations_delegated_administrator" "guardduty_delegation" {
-#   # depends_on        = [null_resource.guardduty_delegation]
-#   account_id        = var.security_account_id
-#   service_principal = "principal"
-# }
-
-# resource "null_resource" "guardduty_delegation" {
-#   provisioner "local-exec" {
-#     command = "sleep 120" # Sleep for 2 minutes (120 seconds)
-#   }
-#   depends_on = [module.lambda_enable_guardduty]
-# }
 
 # Publish a JSON message to the SNS Topic
 resource "null_resource" "publish_guardduty_message" {
