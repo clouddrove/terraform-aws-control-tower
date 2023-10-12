@@ -43,7 +43,7 @@ data "aws_iam_policy_document" "iam-policy" {
     condition {
       test     = "StringEquals"
       variable = "aws:PrincipalOrgId"
-      values   = ["${var.organization_id}"]
+      values   = [var.organization_id]
     }
   }
 
@@ -54,7 +54,7 @@ data "aws_iam_policy_document" "iam-policy" {
     condition {
       test     = "StringEquals"
       variable = "aws:PrincipalOrgId"
-      values   = ["${var.organization_id}"]
+      values   = [var.organization_id]
     }
   }
 
