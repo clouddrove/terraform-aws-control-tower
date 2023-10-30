@@ -370,6 +370,7 @@ variable "vpn_organization_name" {
 ##----------------------------------------oidc----------------------------------#
 variable "repository" {
   type        = string
+  default     = ""
   description = "Repository name"
 }
 
@@ -387,11 +388,13 @@ variable "url" {
 
 variable "github_repo" {
   type        = string
+  default     = ""
   description = "GitHub repository to set IAM Role conditions for. Example: 'username/repo-name'"
 }
 
 variable "role_name" {
   type        = string
+  default     = "GitHub-Deploy-Role"
   description = "Name of the AWS IAM Role"
 }
 
