@@ -184,7 +184,7 @@ module "vpn" {
 #----------------------------------------------aws-oidc-github-role----------------------------------------------------##
 
 module "aws_oidc_role" {
-  source = "./_module/oidc"
+  source = "./_modules/oidc"
 
   enable      = var.oidc_enable
   name        = var.name
