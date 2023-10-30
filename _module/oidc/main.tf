@@ -8,15 +8,15 @@ locals {
   }
 }
 
-data "tls_certificate" "github" {
-  count = var.enable ? 1 : 0
-  url   = var.url
-}
+# data "tls_certificate" "github" {
+#   count = var.enable ? 1 : 0
+#   url   = var.url
+# }
 
 resource "aws_iam_openid_connect_provider" "github" {
   count           = var.enable ? 1 : 0
   client_id_list  = ["sts.amazonaws.com"]
-  thumbprint_list = [data.tls_certificate.github[0].certificates[0].sha1_fingerprint]
+#   thumbprint_list = [data.tls_certificate.github[0].certificates[0].sha1_fingerprint]
   url             = var.url
   tags            = local.tags
 }
