@@ -368,21 +368,10 @@ variable "vpn_organization_name" {
 }
 
 ##----------------------------------------oidc----------------------------------#
-
-# variable "name" {
-#   type        = string
-#   description = "Name for the AWS IAM OpenID Connect Provider"
-# }
-
 variable "repository" {
   type        = string
   description = "Repository name"
 }
-
-# variable "environment" {
-#   type        = string
-#   description = "Environment name"
-# }
 
 variable "managedby" {
   type        = string
@@ -391,6 +380,7 @@ variable "managedby" {
 
 variable "url" {
   type        = string
+  default     = "https://token.actions.githubusercontent.com"
   description = "URL for the OIDC provider"
 }
 
@@ -407,5 +397,5 @@ variable "role_name" {
 variable "oidc_enable" {
   type        = bool
   default     = true
-  description = "Name of the AWS IAM Role"
+  description = "Want to deploy oidc role or not"
 }
