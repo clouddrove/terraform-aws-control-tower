@@ -1,7 +1,7 @@
 data "aws_caller_identity" "current" {}
 
 locals {
-#   account_id = data.aws_caller_identity.current.account_id
+  #   account_id = data.aws_caller_identity.current.account_id
   tags = {
     "name"        = var.name
     "repository"  = var.repository
@@ -28,6 +28,7 @@ resource "aws_iam_openid_connect_provider" "github" {
 resource "aws_iam_role" "github" {
   count              = var.enable ? 1 : 0
   name               = var.role_name
+  tags               = local.tags
   assume_role_policy = <<EOF
 {
     "Version": "2012-10-17",
