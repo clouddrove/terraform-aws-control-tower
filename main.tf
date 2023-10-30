@@ -180,3 +180,17 @@ module "vpn" {
   dns_names           = [var.domain]
   saml_arn            = var.saml_arn
 }
+
+#----------------------------------------------aws-oidc-github-role----------------------------------------------------##
+
+module "aws_oidc_role" {
+  source = "./_module/oidc"
+
+  enable      = var.oidc_enable
+  name        = var.name
+  environment = var.environment
+  managedby   = var.managedby
+  url         = var.url
+  github_repo = var.github_repo
+  role_name   = var.role_name
+}

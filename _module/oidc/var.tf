@@ -32,3 +32,9 @@ variable "role_name" {
   type        = string
   description = "Name of the AWS IAM Role"
 }
+
+variable "enable" {
+  type        = bool
+  default     = true
+  description = "Name of the AWS IAM Role"
+}
