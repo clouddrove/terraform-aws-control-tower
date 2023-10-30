@@ -18,7 +18,7 @@ data "tls_certificate" "github" {
 resource "aws_iam_openid_connect_provider" "github" {
   count           = var.enable ? 1 : 0
   client_id_list  = ["sts.amazonaws.com"]
-  thumbprint_list = ["${data.tls_certificate[0].github.certificates.0.sha1_fingerprint}"]
+  thumbprint_list = ["${data.tls_certificate.github[0].certificates.0.sha1_fingerprint}"]
   url             = var.url
   tags            = local.tags
 }
@@ -35,7 +35,7 @@ resource "aws_iam_role" "github" {
         {
             "Effect": "Allow",
             "Principal": {
-                "Federated": "${aws_iam_openid_connect_provider[0].github.arn}"
+                "Federated": "${aws_iam_openid_connect_provider.github[0].arn}"
             },
             "Action": "sts:AssumeRoleWithWebIdentity",
             "Condition": {
@@ -54,7 +54,7 @@ EOF
 
 resource "aws_iam_role_policy_attachment" "github" {
   count      = var.enable ? 1 : 0
-  role       = aws_iam_role[0].github.name
+  role       = aws_iam_role.github[0].name
   policy_arn = "arn:aws:iam::aws:policy/AdministratorAccess"
 }
 
