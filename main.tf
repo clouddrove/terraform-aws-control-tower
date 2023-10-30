@@ -190,6 +190,7 @@ module "aws_oidc_role" {
   name        = var.name
   environment = var.environment
   managedby   = var.managedby
+  repository  = var.repository
   url         = var.url
   github_repo = var.github_repo
   role_name   = var.role_name
