@@ -397,6 +397,6 @@ variable "role_name" {
 
 variable "oidc_enable" {
   type        = bool
-  default     = true
+  default     = false
   description = "Want to deploy oidc role or not"
 }
