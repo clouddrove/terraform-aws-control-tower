@@ -412,6 +412,6 @@ variable "oidc_provider_exists" {
 
 variable "policy_arns" {
   type        = list(string)
-  default = ["arn:aws:iam::aws:policy/AdministratorAccess"]
+  default     = ["arn:aws:iam::aws:policy/AdministratorAccess"]
   description = "A list of ARNs of policies to attach to the IAM role."
 }

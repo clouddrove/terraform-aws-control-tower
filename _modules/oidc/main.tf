@@ -14,7 +14,7 @@ data "tls_certificate" "github" {
 
 data "aws_iam_openid_connect_provider" "github" {
   count = var.enable && var.oidc_provider_exists ? 1 : 0
-  url = var.url
+  url   = var.url
 }
 
 resource "aws_iam_openid_connect_provider" "github" {
@@ -28,9 +28,9 @@ resource "aws_iam_openid_connect_provider" "github" {
 # Include the role resource and attachment here
 
 resource "aws_iam_role" "github" {
-  count              = var.enable ? 1 : 0
-  name               = var.role_name
-  tags               = local.tags
+  count = var.enable ? 1 : 0
+  name  = var.role_name
+  tags  = local.tags
   assume_role_policy = jsonencode({
     Version = "2012-10-17",
     Statement = [
@@ -38,7 +38,7 @@ resource "aws_iam_role" "github" {
         Effect = "Allow",
         Principal = {
           Federated = var.oidc_provider_exists ? data.aws_iam_openid_connect_provider.github[0].arn : aws_iam_openid_connect_provider.github[0].arn
-          
+
         },
         Action = "sts:AssumeRoleWithWebIdentity",
         Condition = {

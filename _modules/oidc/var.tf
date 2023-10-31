@@ -25,7 +25,7 @@ variable "url" {
 }
 
 variable "oidc_github_repos" {
-  type    = list(string)
+  type        = list(string)
   description = "GitHub repository names for access"
 }
 
