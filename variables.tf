@@ -34,7 +34,7 @@ variable "vpc_enable" {
 
 variable "cidr_block" {
   type        = string
-  default     = ""
+  default     = "10.10.0.0/16"
   description = "CIDR for the VPC."
 }
 
@@ -47,7 +47,13 @@ variable "enable_flow_log" {
 variable "flow_log_destination_type" {
   type        = string
   default     = "s3"
-  description = "Type of flow log destination. Can be s3 or cloud-watch-logs"
+  description = "Type of flow log destination. Can be `s3` or `cloud-watch-logs`"
+}
+
+variable "create_flow_log_cloudwatch_iam_role" {
+  type        = bool
+  default     = true
+  description = "Flag to be set true when cloudwatch iam role is to be created when flow log destination type is set to cloudwatch logs."
 }
 
 ##----------------------------------------------SUBNET--------------------------------------------------------##
@@ -60,7 +66,7 @@ variable "subnet_enable" {
 variable "subnet_type" {
   type        = string
   default     = ""
-  description = "Type of subnets to create (`private` or `public`)."
+  description = "Type of subnets to create (`private`, `public` or `public-private` )."
 }
 
 variable "nat_gateway_enabled" {
@@ -167,7 +173,7 @@ variable "private_outbound_acl_rules" {
 variable "sg_enable" {
   type        = bool
   default     = true
-  description = "Whether or not to enable the entire ACM module or not."
+  description = "Whether or not to enable the entire SECURITY-GROUP module."
 }
 
 variable "ssh_allow_ip" {
@@ -177,101 +183,120 @@ variable "ssh_allow_ip" {
 }
 
 ##----------------------------------------------TRANSIT-GATEWAY----------------------------------------------------##
+##-----------------tgw_hub---------------------##
 variable "tgw_hub_enable" {
   type        = bool
   default     = false
   description = "Enable subnet to create or not."
 }
 
-variable "hub_tgw_create" {
+variable "tgw_hub_create" {
   type        = bool
   default     = true
   description = "Whether or not to create a Transit Gateway."
 }
 
-variable "hub_auto_accept_shared_attachments" {
+variable "tgw_hub_auto_accept_shared_attachments" {
   type        = string
   default     = "enable"
   description = "Whether resource attachment requests are automatically accepted. Valid values: disable, enable. Default value: disable."
 }
 
-variable "description" {
+variable "tgw_hub_description" {
   type        = string
-  default     = "This transit Gateway is created for centerlised vpc peering"
-  description = "This transit Gateway is created for centerlised vpc peering"
+  default     = "This transit gateway hub is created for centerlised vpc peering"
+  description = "Description of the Hub Transit Gateway"
 }
 
-variable "resource_share_enable" {
+variable "tgw_hub_resource_share_enable" {
   type        = bool
   default     = true
   description = "Whether or not to create a Resource Share for the Transit Gateway."
 }
 
-variable "resource_share_allow_external_principals" {
+variable "tgw_hub_resource_share_allow_external_principals" {
   type        = bool
   default     = true
   description = "Whether or not to allow external principals for the Resource Share for the Transit Gateway."
 }
 
-variable "resource_share_account_ids" {
+variable "tgw_hub_resource_share_account_ids" {
   type        = list(any)
   default     = []
   description = "Ids of the account where the Transit Gateway should be shared."
 }
 
-variable "hub_destination_cidr" {
+variable "tgw_hub_destination_cidr" {
   type        = list(any)
   default     = []
   description = "The destination CIDR block (VPC)."
 }
 
-variable "transit_gateway_default_route_table_association" {
+variable "tgw_hub_transit_gateway_default_route_table_association" {
   type        = bool
   default     = true
   description = "Boolean whether the VPC Attachment should be associated with the EC2 Transit Gateway association default route table. This cannot be configured or perform drift detection with Resource Access Manager shared EC2 Transit Gateways. Default value: true."
 }
 
-variable "transit_gateway_default_route_table_propagation" {
+variable "tgw_hub_transit_gateway_default_route_table_propagation" {
   type        = bool
   default     = true
   description = "Boolean whether the VPC Attachment should propagate routes with the EC2 Transit Gateway propagation default route table. This cannot be configured or perform drift detection with Resource Access Manager shared EC2 Transit Gateways. Default value: true."
 }
 
-## SPOKE
+##-----------------tgw_spoke-------------------##
 variable "tgw_spoke_enable" {
   type        = bool
   default     = false
   description = "Enable subnet to create or not."
 }
 
-variable "spoke_tgw_create" {
+variable "tgw_spoke_create" {
   type        = bool
   default     = false
   description = "Whether or not to create a Transit Gateway."
 }
 
-variable "aws_ram_resource_share_accepter" {
+variable "tgw_spoke_description" {
+  type        = string
+  default     = "This transit gateway spoke is created for centerlised vpc peering"
+  description = "Description of the Spoke Transit Gateway"
+}
+
+variable "tgw_spoke_aws_ram_resource_share_accepter" {
   type        = bool
   default     = true
   description = "Whether resource attachment requests are automatically accepted. Valid values: disable, enable. Default value: disable."
 }
 
-variable "resource_share_arn" {
+variable "tgw_spoke_resource_share_arn" {
   type        = string
   default     = ""
   description = "Whether resource attachment requests are automatically accepted. Valid values: disable, enable. Default value: disable."
 }
 
-variable "spoke_destination_cidr" {
+variable "tgw_spoke_spoke_destination_cidr" {
   type        = list(any)
   default     = []
   description = "The destination CIDR block (VPC 1)."
 }
 
-variable "transit_gateway_id" {
+variable "tgw_spoke_transit_gateway_id" {
   type        = string
   default     = ""
   description = "The ID of gateway id."
+}
+
+variable "tgw_spoke_transit_gateway_default_route_table_association" {
+  type        = bool
+  default     = true
+  description = "Boolean whether the VPC Attachment should be associated with the EC2 Transit Gateway association default route table. This cannot be configured or perform drift detection with Resource Access Manager shared EC2 Transit Gateways. Default value: true."
+}
+
+variable "tgw_spoke_transit_gateway_default_route_table_propagation" {
+  type        = bool
+  default     = true
+  description = "Boolean whether the VPC Attachment should propagate routes with the EC2 Transit Gateway propagation default route table. This cannot be configured or perform drift detection with Resource Access Manager shared EC2 Transit Gateways. Default value: true."
 }
 
 ##----------------------------------------------ACM----------------------------------------------------##
@@ -324,6 +349,12 @@ variable "records" {
   description = "List of objects of DNS records"
 }
 
+variable "records_force_destroy" {
+  type        = bool
+  default     = true
+  description = "Whether to destroy all records (possibly managed outside of Terraform) in the zone when destroying the zone."
+}
+
 ##----------------------------------------------VPN----------------------------------------------------##
 variable "vpn_enable" {
   type        = bool
@@ -355,10 +386,22 @@ variable "vpn_network_cidr" {
   description = "Client Network CIDR"
 }
 
+variable "vpn_authentication_type" {
+  type        = string
+  default     = "certificate-authentication"
+  description = "The type of client authentication to be used. Valid values are `federated-authentication` , `certificate-authentication`"
+}
+
 variable "saml_arn" {
   type        = string
   default     = ""
   description = "The ARN of the IAM SAML identity provider. "
+}
+
+variable "self_saml_arn" {
+  type        = string
+  default     = ""
+  description = "The ARN of the IAM SAML identity provider for the self service portal. "
 }
 
 variable "vpn_organization_name" {
