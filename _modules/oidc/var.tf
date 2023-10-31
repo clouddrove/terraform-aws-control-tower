@@ -5,6 +5,7 @@ variable "name" {
 
 variable "repository" {
   type        = string
+  default     = "https://github.com/clouddrove/terraform-aws-control-tower.git"
   description = "Repository name for tags"
 }
 
@@ -37,7 +38,7 @@ variable "role_name" {
 variable "enable" {
   type        = bool
   default     = true
-  description = "create aws oidc GitHUb role or not"
+  description = "Create aws oidc GitHUb role or not"
 }
 
 variable "oidc_provider_exists" {
@@ -47,6 +48,6 @@ variable "oidc_provider_exists" {
 }
 
 variable "policy_arns" {
-  description = "A list of ARNs of policies to attach to the IAM role."
   type        = list(string)
+  description = "A list of ARNs of policies to attach to the IAM role."
 }

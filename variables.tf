@@ -371,13 +371,13 @@ variable "vpn_organization_name" {
 variable "repository" {
   type        = string
   default     = "https://github.com/clouddrove/terraform-aws-control-tower.git"
-  description = "Repository name"
+  description = "Repository name for tags"
 }
 
 variable "managedby" {
   type        = string
   default     = "hello@clouddrove.com"
-  description = "Managed by"
+  description = "Managed by for tags"
 }
 
 variable "url" {
@@ -389,13 +389,13 @@ variable "url" {
 variable "role_name" {
   type        = string
   default     = "GitHub-Deploy-Role"
-  description = "Name of the AWS IAM Role"
+  description = "Name of the AWS IAM Role to create"
 }
 
 variable "oidc_enable" {
   type        = bool
   default     = false
-  description = "Want to deploy oidc role or not"
+  description = "Create aws oidc GitHUb role or not"
 }
 
 variable "oidc_provider_exists" {
