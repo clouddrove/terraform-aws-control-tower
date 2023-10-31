@@ -62,5 +62,5 @@ module "CT" {
   oidc_provider_exists = var.oidc_provider_exists
   url                  = var.url
   policy_arns          = var.policy_arns
-  
+
 }
