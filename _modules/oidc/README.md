@@ -24,9 +24,10 @@ Before using this configuration, make sure you have the following prerequisites:
   subnet_enable    = false
   vpc_enable       = false
   oidc_enable      = true
-  url              = "https://token.actions.githubusercontent.com"
-  github_repos     = ["username/reponame"]
+  url                   = "https://token.actions.githubusercontent.com"
+  oidc_github_repos     = ["username/reponame"]
   role_name        = "GitHub-Deploy-Role"
+  oidc_provider_exists = false
   name             = "app"
   repository       = "repository-name"
   environment      = "control-tower"
@@ -57,13 +58,15 @@ Before using this configuration, make sure you have the following prerequisites:
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
 | oidc_enable | Whether to create AWS oidc GitHUb role or not. | `bool` | false | yes |
+| oidc_provider_exists | Mention oidc provider exist or not in true or false. | `bool` | false | yes |
 | role_name  | Role name . | `string` | `GitHub-Deploy-Role` | yes |
-| github_repos   | GitHub repository to set IAM Role conditions . | `list(string)` | `""` | yes |
+| oidc_github_repos   | GitHub repository to set IAM Role conditions . | `list(string)` | `""` | yes |
 | url | URL for the OIDC provider. | `string` | `https://token.actions.githubusercontent.com` | yes |
-| environment | Environment (e.g. `prod`, `dev`, `staging`). | `string` | `""` | yes |
-| managedby | ManagedBy, eg 'CloudDrove' | `string` | `"hello@clouddrove.com"` | yes |
-| name | Name  (e.g. `app` or `cluster`). | `string` | `""` | yes |
-| repository | repsoitory name | `string` | `""` | yes |
+| environment | Environment for tag, (e.g. `prod`, `dev`, `staging`). | `string` | `""` | yes |
+| managedby | ManagedBy for tag, eg 'CloudDrove' | `string` | `"hello@clouddrove.com"` | yes |
+| name | Name for tag  (e.g. `app` or `cluster`). | `string` | `""` | yes |
+| repository | repsoitory name for tag| `string` | `""` | yes |
+| policy_arns | A list of ARNs of policies to attach to the IAM role| `list(string)` | `["arn:aws:iam::aws:policy/AdministratorAccess"]` | yes |
 
 ## Cleanup
 1. To destroy the created resources, run:
