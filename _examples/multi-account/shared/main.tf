@@ -52,4 +52,11 @@ module "CT" {
   transit_gateway_id     = var.transit_gateway_id
   resource_share_arn     = var.resource_share_arn
 
+  ## AWS-OIDC-GITHUB-ROLE
+  oidc_enable          = var.oidc_enable
+  oidc_github_repos    = var.oidc_github_repos
+  role_name            = var.role_name
+  oidc_provider_exists = var.oidc_provider_exists
+  url                  = var.url
+  policy_arns          = var.policy_arns
 }
