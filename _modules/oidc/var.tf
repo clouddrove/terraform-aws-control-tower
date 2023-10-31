@@ -23,9 +23,9 @@ variable "url" {
   description = "URL for the OIDC provider"
 }
 
-variable "github_repo" {
-  type        = string
-  description = "GitHub repository to set IAM Role conditions for. Example: 'username/repo-name'"
+variable "github_repos" {
+  type        = list(string)
+  description = "GitHub repository names"
 }
 
 variable "role_name" {

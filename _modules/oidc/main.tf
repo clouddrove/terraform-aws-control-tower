@@ -23,36 +23,36 @@ resource "aws_iam_openid_connect_provider" "github" {
 # Include the role resource and attachment here
 
 resource "aws_iam_role" "github" {
-  count              = var.enable ? 1 : 0
-  name               = var.role_name
-  tags               = local.tags
-  assume_role_policy = <<EOF
-{
-    "Version": "2012-10-17",
-    "Statement": [
-        {
-            "Effect": "Allow",
-            "Principal": {
-                "Federated": "${aws_iam_openid_connect_provider.github[0].arn}"
-            },
-            "Action": "sts:AssumeRoleWithWebIdentity",
-            "Condition": {
-                "StringEquals": {
-                    "token.actions.githubusercontent.com:aud": "sts.amazonaws.com"
-                },
-                "StringLike": {
-                    "token.actions.githubusercontent.com:sub": "repo:${var.github_repo}:*"
-                }
-            }
+  count = var.enable ? 1 : 0
+  name  = var.role_name
+  tags  = local.tags
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Effect = "Allow",
+        Principal = {
+          Federated = aws_iam_openid_connect_provider.github[0].arn
+        },
+        Action = "sts:AssumeRoleWithWebIdentity",
+        Condition = {
+          StringEquals = {
+            "token.actions.githubusercontent.com:aud" = "sts.amazonaws.com"
+          },
+          "ForAnyValue:StringLike" = {
+            "token.actions.githubusercontent.com:sub" = [
+              for repo in var.github_repos : "repo:${repo}:*"
+            ]
+          }
         }
+      }
     ]
+  })
 }
-EOF
-}
+
 
 resource "aws_iam_role_policy_attachment" "github" {
   count      = var.enable ? 1 : 0
   role       = aws_iam_role.github[0].name
   policy_arn = "arn:aws:iam::aws:policy/AdministratorAccess"
 }
-
