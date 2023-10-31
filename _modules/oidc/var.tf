@@ -15,6 +15,7 @@ variable "environment" {
 
 variable "managedby" {
   type        = string
+  default     = "hello@clouddrove.com"
   description = "Managed by"
 }
 
