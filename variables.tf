@@ -370,7 +370,7 @@ variable "vpn_organization_name" {
 ##----------------------------------------oidc----------------------------------#
 variable "repository" {
   type        = string
-  default     = ""
+  default     = "https://github.com/clouddrove/terraform-aws-control-tower.git"
   description = "Repository name"
 }
 
@@ -414,4 +414,10 @@ variable "policy_arns" {
   type        = list(string)
   default     = ["arn:aws:iam::aws:policy/AdministratorAccess"]
   description = "A list of ARNs of policies to attach to the IAM role."
+}
+
+variable "oidc_github_repos" {
+  type        = list(string)
+  default     = [""]
+  description = "GitHub repository names for access"
 }
