@@ -192,6 +192,8 @@ module "aws_oidc_role" {
   managedby    = var.managedby
   repository   = var.repository
   url          = var.url
-  github_repos = var.github_repos
+  oidc_github_repos = var.oidc_github_repos
   role_name    = var.role_name
+  policy_arns  = var.policy_arns
+  oidc_provider_exists= var.oidc_provider_exists
 }

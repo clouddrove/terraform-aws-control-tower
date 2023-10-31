@@ -403,3 +403,15 @@ variable "oidc_enable" {
   default     = false
   description = "Want to deploy oidc role or not"
 }
+
+variable "oidc_provider_exists" {
+  type        = bool
+  default     = false
+  description = "Mention oidc provider exist or not in true or false"
+}
+
+variable "policy_arns" {
+  type        = list(string)
+  default = ["arn:aws:iam::aws:policy/AdministratorAccess"]
+  description = "A list of ARNs of policies to attach to the IAM role."
+}

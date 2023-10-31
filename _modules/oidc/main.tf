@@ -12,8 +12,13 @@ data "tls_certificate" "github" {
   url   = var.url
 }
 
+data "aws_iam_openid_connect_provider" "github" {
+  count = var.enable && var.oidc_provider_exists ? 1 : 0
+  url = var.url
+}
+
 resource "aws_iam_openid_connect_provider" "github" {
-  count           = var.enable ? 1 : 0
+  count           = var.enable && !var.oidc_provider_exists ? 1 : 0
   client_id_list  = ["sts.amazonaws.com"]
   thumbprint_list = [data.tls_certificate.github[0].certificates[0].sha1_fingerprint]
   url             = var.url
@@ -23,16 +28,17 @@ resource "aws_iam_openid_connect_provider" "github" {
 # Include the role resource and attachment here
 
 resource "aws_iam_role" "github" {
-  count = var.enable ? 1 : 0
-  name  = var.role_name
-  tags  = local.tags
+  count              = var.enable ? 1 : 0
+  name               = var.role_name
+  tags               = local.tags
   assume_role_policy = jsonencode({
     Version = "2012-10-17",
     Statement = [
       {
         Effect = "Allow",
         Principal = {
-          Federated = aws_iam_openid_connect_provider.github[0].arn
+          Federated = var.oidc_provider_exists ? data.aws_iam_openid_connect_provider.github[0].arn : aws_iam_openid_connect_provider.github[0].arn
+          
         },
         Action = "sts:AssumeRoleWithWebIdentity",
         Condition = {
@@ -41,7 +47,7 @@ resource "aws_iam_role" "github" {
           },
           "ForAnyValue:StringLike" = {
             "token.actions.githubusercontent.com:sub" = [
-              for repo in var.github_repos : "repo:${repo}:*"
+              for repo in var.oidc_github_repos : "repo:${repo}:*"
             ]
           }
         }
@@ -50,9 +56,8 @@ resource "aws_iam_role" "github" {
   })
 }
 
-
 resource "aws_iam_role_policy_attachment" "github" {
-  count      = var.enable ? 1 : 0
+  count      = var.enable ? length(var.policy_arns) : 0
   role       = aws_iam_role.github[0].name
-  policy_arn = "arn:aws:iam::aws:policy/AdministratorAccess"
+  policy_arn = var.policy_arns[count.index]
 }
