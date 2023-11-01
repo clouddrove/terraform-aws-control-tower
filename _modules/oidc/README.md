@@ -11,27 +11,27 @@ Before using this configuration, make sure you have the following prerequisites:
 
 ## Example
 ```bash
-  module "oidc" {
+  module "aws_oidc_role" {
   source = "git@github.com:clouddrove/terraform-aws-control-tower?ref=master"
 
   # Module input variables
-  vpn_enable       = false
-  route53_enable   = false
-  acm_enable       = false
-  tgw_spoke_enable = false
-  tgw_hub_enable   = false
-  sg_enable        = false
-  subnet_enable    = false
-  vpc_enable       = false
-  iam_github_oidc_role_enable      = true
+  vpn_enable                     = false
+  route53_enable                 = false
+  acm_enable                     = false
+  tgw_spoke_enable               = false
+  tgw_hub_enable                 = false
+  sg_enable                      = false
+  subnet_enable                  = false
+  vpc_enable                     = false
+  iam_github_oidc_role_enable    = true
   provider_url                   = "https://token.actions.githubusercontent.com"
-  oidc_github_repos     = ["username/reponame"]
-  role_name        = "GitHub-Deploy-Role"
-  oidc_provider_exists = false
-  name             = "app"
-  repository       = "repository-name"
-  environment      = "control-tower"
-  managedby        = "hello@clouddrove.com"
+  oidc_github_repos              = ["username/reponame"]
+  role_name                      = "GitHub-Deploy-Role"
+  oidc_provider_exists           = false
+  name                           = "app"
+  repository                     = "repository-name"
+  environment                    = "control-tower"
+  managedby                      = "hello@clouddrove.com"
 }
 ```
 
