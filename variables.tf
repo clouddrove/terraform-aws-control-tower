@@ -275,7 +275,7 @@ variable "tgw_spoke_resource_share_arn" {
   description = "Whether resource attachment requests are automatically accepted. Valid values: disable, enable. Default value: disable."
 }
 
-variable "tgw_spoke_spoke_destination_cidr" {
+variable "tgw_spoke_destination_cidr" {
   type        = list(any)
   default     = []
   description = "The destination CIDR block (VPC 1)."
@@ -283,7 +283,7 @@ variable "tgw_spoke_spoke_destination_cidr" {
 
 variable "tgw_spoke_transit_gateway_id" {
   type        = string
-  default     = ""
+  default     = null
   description = "The ID of gateway id."
 }
 

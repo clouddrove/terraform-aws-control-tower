@@ -87,11 +87,11 @@ module "tgw_hub" {
   tgw_create                     = var.tgw_hub_create
   auto_accept_shared_attachments = var.tgw_hub_auto_accept_shared_attachments
   description                    = var.tgw_hub_description
-  #TGW Share
+  # -- TGW Share
   resource_share_enable                    = var.tgw_hub_resource_share_enable
   resource_share_allow_external_principals = var.tgw_hub_resource_share_allow_external_principals
   resource_share_account_ids               = var.tgw_hub_resource_share_account_ids
-  # VPC Attachements
+  # -- VPC Attachements
   vpc_attachments = {
     vpc1 = {
       vpc_id                                          = module.vpc.vpc_id
@@ -114,10 +114,10 @@ module "tgw_spoke" {
   environment = var.environment
   tgw_create  = var.tgw_spoke_create
   description = var.tgw_spoke_description
-  #TGW Share
+  # -- TGW Share
   aws_ram_resource_share_accepter = var.tgw_spoke_aws_ram_resource_share_accepter
   resource_share_arn              = var.tgw_spoke_resource_share_arn
-  # VPC Attachements
+  # -- VPC Attachements
   transit_gateway_id = var.tgw_spoke_transit_gateway_id
   vpc_attachments = {
     vpc1 = {
@@ -126,7 +126,7 @@ module "tgw_spoke" {
       transit_gateway_default_route_table_association = var.tgw_spoke_transit_gateway_default_route_table_association
       transit_gateway_default_route_table_propagation = var.tgw_spoke_transit_gateway_default_route_table_propagation
       vpc_route_table_ids                             = module.subnet.private_route_tables_id
-      destination_cidr                                = var.tgw_spoke_spoke_destination_cidr
+      destination_cidr                                = var.tgw_spoke_destination_cidr
     }
   }
 }
@@ -169,6 +169,7 @@ module "vpn" {
   version = "1.0.7"
 
   enabled             = var.vpn_enable
+  depends_on          = [module.vpc]
   name                = var.name
   environment         = var.environment
   split_tunnel_enable = var.split_tunnel_enable
