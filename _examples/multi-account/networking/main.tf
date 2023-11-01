@@ -47,9 +47,9 @@ module "CT" {
   records = var.records
 
   ## TGW-HUB
-  tgw_hub_enable             = var.tgw_hub_enable
-  hub_destination_cidr       = var.hub_destination_cidr
-  resource_share_account_ids = var.resource_share_account_ids
+  tgw_hub_enable                     = var.tgw_hub_enable
+  tgw_hub_destination_cidr           = var.hub_destination_cidr
+  tgw_hub_resource_share_account_ids = var.resource_share_account_ids
 
   ## VPN
   vpn_enable     = var.vpn_enable
