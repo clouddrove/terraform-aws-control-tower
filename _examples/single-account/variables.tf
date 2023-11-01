@@ -69,7 +69,7 @@ variable "vpn_cidr_block" {
 
 ## AWS-OIDC-GITHUB-ROLE
 
-variable "iam_github_oidc_role_enable" {
+variable "aws_github_oidc_role_enable" {
   type        = bool
   default     = true
   description = "Create aws oidc GitHUb role or not"
