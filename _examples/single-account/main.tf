@@ -56,10 +56,10 @@ module "CT" {
   vpn_cidr_block = var.vpn_cidr_block
 
   ## AWS-OIDC-GITHUB-ROLE
-  oidc_enable          = var.oidc_enable
+  iam_github_oidc_role_enable          = var.iam_github_oidc_role_enable
   oidc_github_repos    = var.oidc_github_repos
   role_name            = var.role_name
   oidc_provider_exists = var.oidc_provider_exists
-  url                  = var.url
+  provider_url                  = var.provider_url
   policy_arns          = var.policy_arns
 }

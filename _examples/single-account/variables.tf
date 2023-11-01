@@ -69,7 +69,7 @@ variable "vpn_cidr_block" {
 
 ## AWS-OIDC-GITHUB-ROLE
 
-variable "oidc_enable" {
+variable "iam_github_oidc_role_enable" {
   type        = bool
   default     = true
   description = "Create aws oidc GitHUb role or not"
@@ -93,10 +93,10 @@ variable "oidc_provider_exists" {
   description = "Mention oidc provider exist or not in true or false"
 }
 
-variable "url" {
+variable "provider_url" {
   type        = string
   default     = "https://token.actions.githubusercontent.com"
-  description = "URL for the OIDC provider"
+  description = "provider_url for the OIDC provider"
 }
 
 variable "policy_arns" {

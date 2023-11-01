@@ -23,8 +23,8 @@ Before using this configuration, make sure you have the following prerequisites:
   sg_enable        = false
   subnet_enable    = false
   vpc_enable       = false
-  oidc_enable      = true
-  url                   = "https://token.actions.githubusercontent.com"
+  iam_github_oidc_role_enable      = true
+  provider_url                   = "https://token.actions.githubusercontent.com"
   oidc_github_repos     = ["username/reponame"]
   role_name        = "GitHub-Deploy-Role"
   oidc_provider_exists = false
@@ -57,11 +57,11 @@ Before using this configuration, make sure you have the following prerequisites:
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| oidc_enable | Whether to create AWS oidc GitHUb role or not. | `bool` | false | yes |
+| iam_github_oidc_role_enable | Whether to create AWS oidc GitHUb role or not. | `bool` | false | yes |
 | oidc_provider_exists | Mention oidc provider exist or not in true or false. | `bool` | false | yes |
 | role_name  | Role name . | `string` | `GitHub-Deploy-Role` | yes |
 | oidc_github_repos   | GitHub repository to set IAM Role conditions . | `list(string)` | `""` | yes |
-| url | URL for the OIDC provider. | `string` | `https://token.actions.githubusercontent.com` | yes |
+| provider_url | URL for the OIDC provider. | `string` | `https://token.actions.githubusercontent.com` | yes |
 | environment | Environment for tag, (e.g. `prod`, `dev`, `staging`). | `string` | `""` | yes |
 | managedby | ManagedBy for tag, eg 'CloudDrove' | `string` | `"hello@clouddrove.com"` | yes |
 | name | Name for tag  (e.g. `app` or `cluster`). | `string` | `""` | yes |

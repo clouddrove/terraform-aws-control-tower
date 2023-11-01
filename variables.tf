@@ -380,7 +380,7 @@ variable "managedby" {
   description = "Managed by for tags"
 }
 
-variable "url" {
+variable "provider_url" {
   type        = string
   default     = "https://token.actions.githubusercontent.com"
   description = "URL for the OIDC provider"
@@ -392,7 +392,7 @@ variable "role_name" {
   description = "Name of the AWS IAM Role to create"
 }
 
-variable "oidc_enable" {
+variable "iam_github_oidc_role_enable" {
   type        = bool
   default     = false
   description = "Create aws oidc GitHUb role or not"

@@ -20,7 +20,7 @@ variable "managedby" {
   description = "Managed by for tags"
 }
 
-variable "url" {
+variable "provider_url" {
   type        = string
   description = "URL for the OIDC provider"
 }
