@@ -13,6 +13,7 @@ jobs:
         working_directory:  '_examples/single-account'
         var_file:           "terraform.tfvars"
         aws_region:         us-east-1
+        timeout:            2
         approvers:          d4kverma
         terraform_version:  1.5.7
         destroy:            false
