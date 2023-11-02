@@ -20,7 +20,7 @@ provider "aws" {
   region = local.region
 }
 
-module "CT" {
+module "control_tower" {
   providers = {
     aws = aws.networking
   }
@@ -45,9 +45,9 @@ module "CT" {
   records = var.records
 
   ## TGW-HUB
-  tgw_spoke_enable       = var.tgw_spoke_enable
-  spoke_destination_cidr = var.spoke_destination_cidr
-  transit_gateway_id     = var.transit_gateway_id
-  resource_share_arn     = var.resource_share_arn
+  tgw_spoke_enable             = var.tgw_spoke_enable
+  tgw_spoke_destination_cidr   = var.spoke_destination_cidr
+  tgw_spoke_transit_gateway_id = var.transit_gateway_id
+  tgw_spoke_resource_share_arn = var.resource_share_arn
 
 }

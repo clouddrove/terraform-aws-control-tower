@@ -20,7 +20,7 @@ provider "aws" {
   region = local.region
 }
 
-module "CT" {
+module "control_tower" {
   providers = {
     aws = aws.networking
   }
@@ -30,7 +30,9 @@ module "CT" {
   region      = local.region
 
   ## VPC
-  cidr_block = local.cidr_block
+  cidr_block                = local.cidr_block
+  enable_flow_log           = var.enable_flow_log
+  flow_log_destination_type = var.flow_log_destination_type
 
   ## SUBNET
   subnet_type         = var.subnet_type
@@ -47,9 +49,9 @@ module "CT" {
   records = var.records
 
   ## TGW-HUB
-  tgw_hub_enable             = var.tgw_hub_enable
-  hub_destination_cidr       = var.hub_destination_cidr
-  resource_share_account_ids = var.resource_share_account_ids
+  tgw_hub_enable                     = var.tgw_hub_enable
+  tgw_hub_destination_cidr           = var.hub_destination_cidr
+  tgw_hub_resource_share_account_ids = var.resource_share_account_ids
 
   ## VPN
   vpn_enable     = var.vpn_enable
