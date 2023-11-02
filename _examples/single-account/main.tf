@@ -20,7 +20,7 @@ provider "aws" {
   region = local.region
 }
 
-module "CT" {
+module "control_tower" {
   providers = {
     aws = aws.networking
   }
