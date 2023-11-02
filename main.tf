@@ -185,7 +185,7 @@ module "vpn" {
   saml_arn            = var.saml_arn
   self_saml_arn       = var.self_saml_arn
 }
-    
+
 #----------------------------------------------aws-oidc-github-role----------------------------------------------------##
 module "aws_github_oidc_role" {
   source = "./_modules/oidc"
