@@ -2,6 +2,19 @@
 # Variables
 # ------------------------------------------------------------------------------
 
+## VPC
+variable "enable_flow_log" {
+  type        = bool
+  default     = true
+  description = "Enable vpc_flow_log logs."
+}
+
+variable "flow_log_destination_type" {
+  type        = string
+  default     = "s3"
+  description = "Type of flow log destination. Can be `s3` or `cloud-watch-logs`"
+}
+
 ## SUBNET
 variable "subnet_type" {
   type        = string

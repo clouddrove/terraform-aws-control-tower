@@ -1,3 +1,5 @@
+enable_flow_log            = true
+flow_log_destination_type  = "cloud-watch-logs"
 subnet_type                = "public-private"
 domain                     = "clouddrove.ca"
 records                    = []

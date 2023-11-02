@@ -4,7 +4,7 @@
 locals {}
 
 module "name" {
-  source = "CT"
+  source = "control_tower"
 
 }
 

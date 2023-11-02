@@ -10,13 +10,14 @@ module "vpc" {
   source  = "clouddrove/vpc/aws"
   version = "2.0.0"
 
-  enable                    = var.vpc_enable
-  name                      = var.name
-  environment               = var.environment
-  cidr_block                = var.cidr_block
-  enable_flow_log           = var.enable_flow_log
-  flow_log_destination_type = var.flow_log_destination_type
-  flow_logs_bucket_name     = "${var.name}-${var.environment}-vpc-logs-bucket"
+  enable                              = var.vpc_enable
+  name                                = var.name
+  environment                         = var.environment
+  cidr_block                          = var.cidr_block
+  enable_flow_log                     = var.enable_flow_log
+  flow_log_destination_type           = var.flow_log_destination_type
+  create_flow_log_cloudwatch_iam_role = var.create_flow_log_cloudwatch_iam_role
+  flow_logs_bucket_name               = var.flow_log_destination_type == "s3" ? "${var.name}-${var.environment}-vpc-logs-bucket" : ""
 }
 
 ##----------------------------------------------SUBNETS----------------------------------------------------##
@@ -83,22 +84,22 @@ module "tgw_hub" {
   depends_on                     = [module.vpc, module.subnet]
   name                           = var.name
   environment                    = var.environment
-  tgw_create                     = var.hub_tgw_create
-  auto_accept_shared_attachments = var.hub_auto_accept_shared_attachments
-  description                    = var.description
-  #TGW Share
-  resource_share_enable                    = var.resource_share_enable
-  resource_share_allow_external_principals = var.resource_share_allow_external_principals
-  resource_share_account_ids               = var.resource_share_account_ids
-  # VPC Attachements
+  tgw_create                     = var.tgw_hub_create
+  auto_accept_shared_attachments = var.tgw_hub_auto_accept_shared_attachments
+  description                    = var.tgw_hub_description
+  # -- TGW Share
+  resource_share_enable                    = var.tgw_hub_resource_share_enable
+  resource_share_allow_external_principals = var.tgw_hub_resource_share_allow_external_principals
+  resource_share_account_ids               = var.tgw_hub_resource_share_account_ids
+  # -- VPC Attachements
   vpc_attachments = {
     vpc1 = {
       vpc_id                                          = module.vpc.vpc_id
       subnet_ids                                      = module.subnet.private_subnet_id
-      transit_gateway_default_route_table_association = var.transit_gateway_default_route_table_association
-      transit_gateway_default_route_table_propagation = var.transit_gateway_default_route_table_propagation
+      transit_gateway_default_route_table_association = var.tgw_hub_transit_gateway_default_route_table_association
+      transit_gateway_default_route_table_propagation = var.tgw_hub_transit_gateway_default_route_table_propagation
       vpc_route_table_ids                             = module.subnet.private_route_tables_id
-      destination_cidr                                = var.hub_destination_cidr
+      destination_cidr                                = var.tgw_hub_destination_cidr
     }
   }
 }
@@ -111,21 +112,21 @@ module "tgw_spoke" {
   depends_on  = [module.vpc, module.subnet]
   name        = var.name
   environment = var.environment
-  tgw_create  = var.spoke_tgw_create
-  description = var.description
-  #TGW Share
-  aws_ram_resource_share_accepter = var.aws_ram_resource_share_accepter
-  resource_share_arn              = var.resource_share_arn
-  # VPC Attachements
-  transit_gateway_id = var.transit_gateway_id
+  tgw_create  = var.tgw_spoke_create
+  description = var.tgw_spoke_description
+  # -- TGW Share
+  aws_ram_resource_share_accepter = var.tgw_spoke_aws_ram_resource_share_accepter
+  resource_share_arn              = var.tgw_spoke_resource_share_arn
+  # -- VPC Attachements
+  transit_gateway_id = var.tgw_spoke_transit_gateway_id
   vpc_attachments = {
     vpc1 = {
       vpc_id                                          = module.vpc.vpc_id
       subnet_ids                                      = module.subnet.private_subnet_id
-      transit_gateway_default_route_table_association = var.transit_gateway_default_route_table_association
-      transit_gateway_default_route_table_propagation = var.transit_gateway_default_route_table_propagation
+      transit_gateway_default_route_table_association = var.tgw_spoke_transit_gateway_default_route_table_association
+      transit_gateway_default_route_table_propagation = var.tgw_spoke_transit_gateway_default_route_table_propagation
       vpc_route_table_ids                             = module.subnet.private_route_tables_id
-      destination_cidr                                = var.spoke_destination_cidr
+      destination_cidr                                = var.tgw_spoke_destination_cidr
     }
   }
 }
@@ -159,6 +160,7 @@ module "route53" {
   record_enabled = var.record_enabled
   records        = var.records
   vpc_id         = module.vpc.vpc_id
+  force_destroy  = var.records_force_destroy
 }
 
 #----------------------------------------------VPN----------------------------------------------------##
@@ -167,6 +169,7 @@ module "vpn" {
   version = "1.0.7"
 
   enabled             = var.vpn_enable
+  depends_on          = [module.vpc]
   name                = var.name
   environment         = var.environment
   split_tunnel_enable = var.split_tunnel_enable
@@ -178,11 +181,12 @@ module "vpn" {
   network_cidr        = var.vpn_network_cidr
   organization_name   = var.vpn_organization_name
   dns_names           = [var.domain]
+  authentication_type = var.vpn_authentication_type
   saml_arn            = var.saml_arn
+  self_saml_arn       = var.self_saml_arn
 }
-
+    
 #----------------------------------------------aws-oidc-github-role----------------------------------------------------##
-
 module "aws_github_oidc_role" {
   source = "./_modules/oidc"
 
