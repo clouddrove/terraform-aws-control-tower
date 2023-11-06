@@ -10,14 +10,16 @@ module "vpc" {
   source  = "clouddrove/vpc/aws"
   version = "2.0.0"
 
-  enable                              = var.vpc_enable
-  name                                = var.name
-  environment                         = var.environment
-  cidr_block                          = var.cidr_block
-  enable_flow_log                     = var.enable_flow_log
-  flow_log_destination_type           = var.flow_log_destination_type
-  create_flow_log_cloudwatch_iam_role = var.create_flow_log_cloudwatch_iam_role
-  flow_logs_bucket_name               = var.flow_log_destination_type == "s3" ? "${var.name}-${var.environment}-vpc-logs-bucket" : ""
+  enable                                          = var.vpc_enable
+  name                                            = "${var.name}-vpc"
+  environment                                     = var.environment
+  cidr_block                                      = var.cidr_block
+  enable_flow_log                                 = var.enable_flow_log
+  flow_log_destination_type                       = var.flow_log_destination_type
+  create_flow_log_cloudwatch_iam_role             = var.create_flow_log_cloudwatch_iam_role
+  flow_logs_bucket_name                           = var.flow_log_destination_type == "s3" ? "${var.name}-${var.environment}-vpc-flow-logs-bucket" : ""
+  flow_log_cloudwatch_log_group_retention_in_days = var.flow_log_retention_period
+  flow_log_destination_arn                        = var.flow_log_destination_arn
 }
 
 ##----------------------------------------------SUBNETS----------------------------------------------------##
@@ -26,7 +28,7 @@ module "subnet" {
   version = "2.0.0"
 
   enable                     = var.subnet_enable
-  name                       = var.name
+  name                       = "${var.name}-subnet"
   environment                = var.environment
   nat_gateway_enabled        = var.nat_gateway_enabled
   single_nat_gateway         = var.single_nat_gateway
@@ -82,7 +84,7 @@ module "tgw_hub" {
 
   enable                         = var.tgw_hub_enable
   depends_on                     = [module.vpc, module.subnet]
-  name                           = var.name
+  name                           = "${var.name}-tgw"
   environment                    = var.environment
   tgw_create                     = var.tgw_hub_create
   auto_accept_shared_attachments = var.tgw_hub_auto_accept_shared_attachments
@@ -110,7 +112,7 @@ module "tgw_spoke" {
 
   enable      = var.tgw_spoke_enable
   depends_on  = [module.vpc, module.subnet]
-  name        = var.name
+  name        = "${var.name}-tgw"
   environment = var.environment
   tgw_create  = var.tgw_spoke_create
   description = var.tgw_spoke_description
@@ -136,13 +138,13 @@ module "acm" {
   source  = "clouddrove/acm/aws"
   version = "1.4.1"
 
-  name        = var.name
+  name        = "${var.name}-certificate"
   environment = var.environment
 
   enable                    = var.acm_enable
   domain_name               = var.domain
   validation_method         = var.validation_method
-  subject_alternative_names = ["*.${var.domain}", "www.${var.domain}"]
+  subject_alternative_names = var.subject_alternative_names != [] ? var.subject_alternative_names : ["*.${var.domain}"]
 }
 
 #----------------------------------------------ROUTE53----------------------------------------------------##
@@ -170,7 +172,7 @@ module "vpn" {
 
   enabled             = var.vpn_enable
   depends_on          = [module.vpc]
-  name                = var.name
+  name                = "${var.name}-client-vpn"
   environment         = var.environment
   split_tunnel_enable = var.split_tunnel_enable
   cidr_block          = var.vpn_cidr_block

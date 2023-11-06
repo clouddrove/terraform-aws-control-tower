@@ -56,6 +56,18 @@ variable "create_flow_log_cloudwatch_iam_role" {
   description = "Flag to be set true when cloudwatch iam role is to be created when flow log destination type is set to cloudwatch logs."
 }
 
+variable "flow_log_retention_period" {
+  type        = number
+  default     = null
+  description = "Specifies the number of days you want to retain log events in the specified log group for VPC flow logs"
+}
+
+variable "flow_log_destination_arn" {
+  type        = string
+  default     = null
+  description = "ARN of destination where vpc flow logs are to stored. Can be of existing s3 or existing cloudwatch log group."
+}
+
 ##----------------------------------------------SUBNET--------------------------------------------------------##
 variable "subnet_enable" {
   type        = bool
@@ -310,6 +322,12 @@ variable "domain" {
   type        = string
   default     = ""
   description = "A domain name for which the certificate should be issued."
+}
+
+variable "subject_alternative_names" {
+  type        = list(any)
+  default     = []
+  description = "Set of domains that should be SANs in the issued certificate. To remove all elements of a previously configured list, set this value equal to an empty list ([]) or use the terraform taint command to trigger recreation."
 }
 
 variable "validation_method" {
