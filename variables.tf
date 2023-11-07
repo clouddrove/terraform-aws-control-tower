@@ -3,7 +3,7 @@
 # ------------------------------------------------------------------------------
 variable "label_order" {
   type        = list(string)
-  default     = ["name", "environment"]
+  default     = ["environment", "name"]
   description = "Label order, e.g. `name`,`environment`."
 }
 

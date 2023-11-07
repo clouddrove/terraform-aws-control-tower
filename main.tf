@@ -1,18 +1,17 @@
-# ------------------------------------------------------------------------------
+##---------------------------------------------------------------------------------------------------------##
 # Resources
-# ------------------------------------------------------------------------------
-locals {
-  label_order = var.label_order
-}
+##---------------------------------------------------------------------------------------------------------##
 
 ##----------------------------------------------VPC--------------------------------------------------------##
 module "vpc" {
   source  = "clouddrove/vpc/aws"
   version = "2.0.0"
 
+  name        = "${var.name}-vpc"
+  environment = var.environment
+  label_order = var.label_order
+
   enable                                          = var.vpc_enable
-  name                                            = "${var.name}-vpc"
-  environment                                     = var.environment
   cidr_block                                      = var.cidr_block
   enable_flow_log                                 = var.enable_flow_log
   flow_log_destination_type                       = var.flow_log_destination_type
@@ -27,9 +26,11 @@ module "subnet" {
   source  = "clouddrove/subnet/aws"
   version = "2.0.0"
 
+  name        = "${var.name}-subnet"
+  environment = var.environment
+  label_order = var.label_order
+
   enable                     = var.subnet_enable
-  name                       = "${var.name}-subnet"
-  environment                = var.environment
   nat_gateway_enabled        = var.nat_gateway_enabled
   single_nat_gateway         = var.single_nat_gateway
   availability_zones         = ["${var.region}a", "${var.region}b", "${var.region}c"]
@@ -48,9 +49,11 @@ module "ssh" {
   source  = "clouddrove/security-group/aws"
   version = "2.0.0"
 
+  name        = "${var.name}-ssh"
+  environment = var.environment
+  label_order = var.label_order
+
   enable              = var.sg_enable
-  name                = "${var.name}-ssh"
-  environment         = var.environment
   vpc_id              = module.vpc.vpc_id
   prefix_list_enabled = true
   entry = [{
@@ -82,10 +85,12 @@ module "tgw_hub" {
   source  = "clouddrove/transit-gateway/aws"
   version = "2.0.0"
 
-  enable                         = var.tgw_hub_enable
+  name        = "${var.name}-tgw"
+  environment = var.environment
+  label_order = var.label_order
+
   depends_on                     = [module.vpc, module.subnet]
-  name                           = "${var.name}-tgw"
-  environment                    = var.environment
+  enable                         = var.tgw_hub_enable
   tgw_create                     = var.tgw_hub_create
   auto_accept_shared_attachments = var.tgw_hub_auto_accept_shared_attachments
   description                    = var.tgw_hub_description
@@ -110,10 +115,12 @@ module "tgw_spoke" {
   source  = "clouddrove/transit-gateway/aws"
   version = "2.0.0"
 
-  enable      = var.tgw_spoke_enable
-  depends_on  = [module.vpc, module.subnet]
   name        = "${var.name}-tgw"
   environment = var.environment
+  label_order = var.label_order
+
+  depends_on  = [module.vpc, module.subnet]
+  enable      = var.tgw_spoke_enable
   tgw_create  = var.tgw_spoke_create
   description = var.tgw_spoke_description
   # -- TGW Share
@@ -140,6 +147,7 @@ module "acm" {
 
   name        = "${var.name}-certificate"
   environment = var.environment
+  label_order = var.label_order
 
   enable                    = var.acm_enable
   domain_name               = var.domain
@@ -152,17 +160,18 @@ module "route53" {
   source  = "clouddrove/route53/aws"
   version = "1.0.2"
 
-  name            = var.name
+  name        = var.name
+  environment = var.environment
+  label_order = var.label_order
+
   enabled         = var.route53_enable
-  environment     = var.environment
   public_enabled  = var.public_enabled
   private_enabled = var.private_enabled
-
-  domain_name    = var.domain
-  record_enabled = var.record_enabled
-  records        = var.records
-  vpc_id         = module.vpc.vpc_id
-  force_destroy  = var.records_force_destroy
+  domain_name     = var.domain
+  record_enabled  = var.record_enabled
+  records         = var.records
+  vpc_id          = module.vpc.vpc_id
+  force_destroy   = var.records_force_destroy
 }
 
 #----------------------------------------------VPN----------------------------------------------------##
@@ -170,10 +179,12 @@ module "vpn" {
   source  = "clouddrove/client-vpn/aws"
   version = "1.0.7"
 
-  enabled             = var.vpn_enable
+  name        = "${var.name}-client-vpn"
+  environment = var.environment
+  label_order = var.label_order
+
   depends_on          = [module.vpc]
-  name                = "${var.name}-client-vpn"
-  environment         = var.environment
+  enabled             = var.vpn_enable
   split_tunnel_enable = var.split_tunnel_enable
   cidr_block          = var.vpn_cidr_block
   vpc_id              = module.vpc.vpc_id
