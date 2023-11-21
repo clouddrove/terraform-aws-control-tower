@@ -56,4 +56,12 @@ module "control_tower" {
   ## VPN
   vpn_enable     = var.vpn_enable
   vpn_cidr_block = var.vpn_cidr_block
+
+  ## AWS-GITHUB-OIDC-ROLE
+  aws_github_oidc_role_enable = var.aws_github_oidc_role_enable
+  oidc_github_repos           = var.oidc_github_repos
+  role_name                   = var.role_name
+  oidc_provider_exists        = var.oidc_provider_exists
+  provider_url                = var.provider_url
+  policy_arns                 = var.policy_arns
 }
