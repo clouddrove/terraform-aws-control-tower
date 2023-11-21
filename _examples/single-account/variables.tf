@@ -96,7 +96,7 @@ variable "oidc_github_repos" {
 
 variable "role_name" {
   type        = string
-  default     = "GitHub-Deploy-Role"
+  default     = "github-oidc-terraform-role"
   description = "Name of the AWS IAM Role to create"
 }
 
