@@ -90,19 +90,16 @@ variable "aws_github_oidc_role_enable" {
 
 variable "oidc_github_repos" {
   type        = list(string)
-  default     = ["clouddrove/terraform-aws-control-tower"]
   description = "GitHub repository names for access"
 }
 
 variable "role_name" {
   type        = string
-  default     = "github-oidc-terraform-role"
   description = "Name of the AWS IAM Role to create"
 }
 
 variable "oidc_provider_exists" {
   type        = bool
-  default     = false
   description = "Mention oidc provider exist or not in true or false"
 }
 
@@ -114,6 +111,5 @@ variable "provider_url" {
 
 variable "policy_arns" {
   type        = list(string)
-  default     = ["arn:aws:iam::aws:policy/AdministratorAccess"]
   description = "A list of ARNs of policies to attach to the IAM role."
 }
