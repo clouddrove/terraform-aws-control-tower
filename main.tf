@@ -152,7 +152,7 @@ module "acm" {
   enable                    = var.acm_enable
   domain_name               = var.domain
   validation_method         = var.validation_method
-  subject_alternative_names = var.subject_alternative_names != [] ? var.subject_alternative_names : ["*.${var.domain}"]
+  subject_alternative_names = length(var.subject_alternative_names) > 0 ? var.subject_alternative_names : ["*.${var.domain}"]
 }
 
 #----------------------------------------------ROUTE53----------------------------------------------------##
