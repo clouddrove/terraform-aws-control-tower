@@ -198,3 +198,19 @@ module "vpn" {
   saml_arn            = var.saml_arn
   self_saml_arn       = var.self_saml_arn
 }
+
+#----------------------------------------------aws-oidc-github-role----------------------------------------------------##
+module "aws_github_oidc_role" {
+  source = "./_modules/aws_github_oidc_role"
+
+  enable               = var.aws_github_oidc_role_enable
+  name                 = var.name
+  environment          = var.environment
+  managedby            = var.managedby
+  repository           = var.repository
+  provider_url         = var.provider_url
+  oidc_github_repos    = var.oidc_github_repos
+  role_name            = var.role_name
+  policy_arns          = var.policy_arns
+  oidc_provider_exists = var.oidc_provider_exists
+}
