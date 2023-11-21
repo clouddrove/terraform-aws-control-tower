@@ -152,7 +152,7 @@ module "acm" {
   enable                    = var.acm_enable
   domain_name               = var.domain
   validation_method         = var.validation_method
-  subject_alternative_names = var.subject_alternative_names != [] ? var.subject_alternative_names : ["*.${var.domain}"]
+  subject_alternative_names = length(var.subject_alternative_names) > 0 ? var.subject_alternative_names : ["*.${var.domain}"]
 }
 
 #----------------------------------------------ROUTE53----------------------------------------------------##
@@ -197,4 +197,20 @@ module "vpn" {
   authentication_type = var.vpn_authentication_type
   saml_arn            = var.saml_arn
   self_saml_arn       = var.self_saml_arn
+}
+
+#----------------------------------------------aws-oidc-github-role----------------------------------------------------##
+module "aws_github_oidc_role" {
+  source = "./_modules/aws_github_oidc_role"
+
+  enable               = var.aws_github_oidc_role_enable
+  name                 = var.name
+  environment          = var.environment
+  managedby            = var.managedby
+  repository           = var.repository
+  provider_url         = var.provider_url
+  oidc_github_repos    = var.oidc_github_repos
+  role_name            = var.role_name
+  policy_arns          = var.policy_arns
+  oidc_provider_exists = var.oidc_provider_exists
 }

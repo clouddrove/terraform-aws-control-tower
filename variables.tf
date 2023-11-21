@@ -427,3 +427,52 @@ variable "vpn_organization_name" {
   default     = "clouddrove.ca"
   description = "Name of organization to use in private certificate"
 }
+
+##----------------------------------------oidc----------------------------------#
+variable "repository" {
+  type        = string
+  default     = "https://github.com/clouddrove/terraform-aws-control-tower.git"
+  description = "Repository name for tags"
+}
+
+variable "managedby" {
+  type        = string
+  default     = "hello@clouddrove.com"
+  description = "Managed by for tags"
+}
+
+variable "provider_url" {
+  type        = string
+  default     = "https://token.actions.githubusercontent.com"
+  description = "URL for the OIDC provider"
+}
+
+variable "role_name" {
+  type        = string
+  default     = "github-oidc-terraform-role"
+  description = "Name of the AWS IAM Role to create"
+}
+
+variable "aws_github_oidc_role_enable" {
+  type        = bool
+  default     = false
+  description = "Create aws oidc GitHUb role or not"
+}
+
+variable "oidc_provider_exists" {
+  type        = bool
+  default     = false
+  description = "Mention oidc provider exist or not in true or false"
+}
+
+variable "policy_arns" {
+  type        = list(string)
+  default     = ["arn:aws:iam::aws:policy/AdministratorAccess"]
+  description = "A list of ARNs of policies to attach to the IAM role."
+}
+
+variable "oidc_github_repos" {
+  type        = list(string)
+  default     = [""]
+  description = "GitHub repository names for access"
+}

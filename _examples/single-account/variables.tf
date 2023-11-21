@@ -79,3 +79,37 @@ variable "vpn_cidr_block" {
   default     = ""
   description = "Client VPN CIDR"
 }
+
+## AWS-OIDC-GITHUB-ROLE
+
+variable "aws_github_oidc_role_enable" {
+  type        = bool
+  default     = true
+  description = "Create aws oidc GitHUb role or not"
+}
+
+variable "oidc_github_repos" {
+  type        = list(string)
+  description = "GitHub repository names for access"
+}
+
+variable "role_name" {
+  type        = string
+  description = "Name of the AWS IAM Role to create"
+}
+
+variable "oidc_provider_exists" {
+  type        = bool
+  description = "Mention oidc provider exist or not in true or false"
+}
+
+variable "provider_url" {
+  type        = string
+  default     = "https://token.actions.githubusercontent.com"
+  description = "provider_url for the OIDC provider"
+}
+
+variable "policy_arns" {
+  type        = list(string)
+  description = "A list of ARNs of policies to attach to the IAM role."
+}
