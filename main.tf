@@ -24,7 +24,7 @@ module "vpc" {
 ##----------------------------------------------SUBNETS----------------------------------------------------##
 module "subnet" {
   source  = "clouddrove/subnet/aws"
-  version = "2.0.0"
+  version = "2.0.1"
 
   name        = "${var.name}-subnet"
   environment = var.environment
