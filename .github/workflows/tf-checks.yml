@@ -8,7 +8,7 @@ jobs:
   single-account:
     uses: clouddrove/github-shared-workflows/.github/workflows/tf-checks.yml@1.2.4
     with:
-      working_directory: './_examples/single-account/'
+      working_directory: './examples/single-account/'
       aws_credentials: true
     secrets:
         AWS_ACCESS_KEY_ID: ${{ secrets.TEST_AWS_ACCESS_KEY }}
@@ -16,7 +16,7 @@ jobs:
   networking:
     uses: clouddrove/github-shared-workflows/.github/workflows/tf-checks.yml@1.2.4
     with:
-      working_directory: './_examples/multi-account/networking'
+      working_directory: './examples/multi-account/networking'
       aws_credentials: true
     secrets:
         AWS_ACCESS_KEY_ID: ${{ secrets.TEST_AWS_ACCESS_KEY }}
@@ -24,7 +24,7 @@ jobs:
   shared:
     uses: clouddrove/github-shared-workflows/.github/workflows/tf-checks.yml@1.2.4
     with:
-      working_directory: './_examples/multi-account/shared'
+      working_directory: './examples/multi-account/shared'
       aws_credentials: true
     secrets:
         AWS_ACCESS_KEY_ID: ${{ secrets.TEST_AWS_ACCESS_KEY }}
@@ -32,7 +32,7 @@ jobs:
   dev:
     uses: clouddrove/github-shared-workflows/.github/workflows/tf-checks.yml@1.2.4
     with:
-      working_directory: './_examples/multi-account/dev'
+      working_directory: './examples/multi-account/dev'
       aws_credentials: true
     secrets:
         AWS_ACCESS_KEY_ID: ${{ secrets.TEST_AWS_ACCESS_KEY }}
