@@ -16,25 +16,42 @@ github_repo: clouddrove/terraform-module-template
 # Badges to display
 badges:
   - name: "Latest Release"
-    image: "https://img.shields.io/github/release/clouddrove/terraform-module-template.svg"
-    url: "https://github.com/clouddrove/terraform-module-template/releases/latest"
+    image: "https://img.shields.io/github/release/clouddrove/terraform-aws-control-tower.svg"
+    url: "https://github.com/clouddrove/terraform-aws-control-tower/releases/latest"
   - name: "tfsec"
-    image: "https://github.com/clouddrove/terraform-module-template/actions/workflows/tfsec.yml/badge.svg"
-    url: ""
+    image: "https://github.com/clouddrove/terraform-aws-control-tower/actions/workflows/tfsec.yml/badge.svg"
+    url: "https://github.com/clouddrove/terraform-aws-control-tower/actions/workflows/tfsec.yml"
   - name: "Licence"
     image: "https://img.shields.io/badge/License-APACHE-blue.svg"
     url: "LICENSE.md"
+  - name: "Changelog"
+    image: "https://img.shields.io/badge/Changelog-blue"
+    url: "CHANGELOG.md"
 
 prerequesties:
-  - name: Terraform 1.4.6
+  - name: Terraform
     url: https://learn.hashicorp.com/terraform/getting-started/install.html
+    version: ">= 1.6.6"
+
+providers:
+  - name: aws
+    url: https://aws.amazon.com/
+    version: ">= 5.31.0"
+
+module_dependencies:
+  - name: AWS VPC Module
+    url: https://github.com/clouddrove/terraform-aws-vpc.git
+    description: Provides VPC resorces.
+  - name: AWS Subnet Module
+    url: https://github.com/clouddrove/terraform-aws-subnet.git
+    description: Provides Subnet Resorces.
+  - name: AWS Security Group Module
+    url: https://github.com/clouddrove/terraform-aws-security-group.git
+    description: Provides security group resources.
     
 #  description of this project
 description: |-
   Terraform module template to create new modules using this as baseline
-# extra content
-include:
-  - "terraform.md"
 
 # How to use this project
 # How to use this project
