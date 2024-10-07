@@ -48,7 +48,7 @@ module_dependencies:
   - name: AWS Security Group Module
     url: https://github.com/clouddrove/terraform-aws-security-group.git
     description: Provides security group resources.
-    
+
 #  description of this project
 description: |-
   Terraform module template to create new modules using this as baseline
