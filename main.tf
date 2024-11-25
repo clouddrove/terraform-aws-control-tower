@@ -177,7 +177,7 @@ module "route53" {
 #----------------------------------------------VPN----------------------------------------------------##
 module "vpn" {
   source  = "clouddrove/client-vpn/aws"
-  version = "1.0.7"
+  version = "1.0.9"
 
   name        = "${var.name}-client-vpn"
   environment = var.environment
