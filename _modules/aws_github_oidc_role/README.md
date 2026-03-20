@@ -72,5 +72,5 @@ Before using this configuration, make sure you have the following prerequisites:
 1. To destroy the created resources, run:
    ```bash
    terraform destroy
-   
+
 2. Confirm the destruction by typing yes when prompted.

@@ -13,4 +13,3 @@ oidc_github_repos    = ["clouddrove/terraform-aws-control-tower"]
 role_name            = "github-oidc-terraform-role"
 policy_arns          = ["arn:aws:iam::aws:policy/AdministratorAccess"]
 oidc_provider_exists = false
-
