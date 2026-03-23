@@ -47,7 +47,7 @@ module "subnet" {
 ##----------------------------------------------SECURITY-GROUP----------------------------------------------------##
 module "ssh" {
   source  = "clouddrove/security-group/aws"
-  version = "2.0.0"
+  version = "2.0.2"
 
   name        = "${var.name}-ssh"
   environment = var.environment
