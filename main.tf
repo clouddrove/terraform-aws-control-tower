@@ -83,7 +83,7 @@ module "ssh" {
 #----------------------------------------------TRANSIT-GATEWAY----------------------------------------------------##
 module "tgw_hub" {
   source  = "clouddrove/transit-gateway/aws"
-  version = "2.0.0"
+  version = "2.0.1"
 
   name        = "${var.name}-tgw"
   environment = var.environment
@@ -113,7 +113,7 @@ module "tgw_hub" {
 
 module "tgw_spoke" {
   source  = "clouddrove/transit-gateway/aws"
-  version = "2.0.0"
+  version = "2.0.1"
 
   name        = "${var.name}-tgw"
   environment = var.environment
