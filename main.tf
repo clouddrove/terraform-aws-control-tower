@@ -158,7 +158,7 @@ module "acm" {
 #----------------------------------------------ROUTE53----------------------------------------------------##
 module "route53" {
   source  = "clouddrove/route53/aws"
-  version = "1.0.2"
+  version = "1.0.3"
 
   name        = var.name
   environment = var.environment
