@@ -137,3 +137,4 @@
 | vpn\_dns\_name | VPN DNS name |
 | vpn\_id | The ID of the Client VPN endpoint. |
 | zone\_id | The Hosted Zone ID. This can be referenced by zone records. |
+
