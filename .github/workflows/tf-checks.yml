@@ -1,43 +1,48 @@
 name: tf-checks
+
+permissions:
+  id-token: write
+  contents: read
+
 on:
-  push:
-    branches: [ master ]
   pull_request:
-  workflow_dispatch:
+    paths:
+      - '**/*.tf'
+      - '*.tf'
 jobs:
   single-account:
-    uses: clouddrove/github-shared-workflows/.github/workflows/tf-checks.yml@master
+    uses: clouddrove/github-shared-workflows/.github/workflows/tf-checks.yml@v2
     with:
       working_directory: './examples/single-account/'
-      provider: none
-      aws_credentials: true
+      provider: aws
+      enable_plan: true
+      show_plan: false
     secrets:
-        AWS_ACCESS_KEY_ID: ${{ secrets.TEST_AWS_ACCESS_KEY }}
-        AWS_SECRET_ACCESS_KEY: ${{ secrets.TEST_AWS_ACCESS_SECRET_KEY }}
+      BUILD_ROLE: ${{ secrets.BUILD_ROLE }}
   networking:
-    uses: clouddrove/github-shared-workflows/.github/workflows/tf-checks.yml@master
+    uses: clouddrove/github-shared-workflows/.github/workflows/tf-checks.yml@v2
     with:
       working_directory: './examples/multi-account/networking'
-      provider: none
-      aws_credentials: true
+      provider: aws
+      enable_plan: true
+      show_plan: false
     secrets:
-        AWS_ACCESS_KEY_ID: ${{ secrets.TEST_AWS_ACCESS_KEY }}
-        AWS_SECRET_ACCESS_KEY: ${{ secrets.TEST_AWS_ACCESS_SECRET_KEY }}
+      BUILD_ROLE: ${{ secrets.BUILD_ROLE }}
   shared:
-    uses: clouddrove/github-shared-workflows/.github/workflows/tf-checks.yml@master
+    uses: clouddrove/github-shared-workflows/.github/workflows/tf-checks.yml@v2
     with:
       working_directory: './examples/multi-account/shared'
-      provider: none
-      aws_credentials: true
+      provider: aws
+      enable_plan: true
+      show_plan: false
     secrets:
-        AWS_ACCESS_KEY_ID: ${{ secrets.TEST_AWS_ACCESS_KEY }}
-        AWS_SECRET_ACCESS_KEY: ${{ secrets.TEST_AWS_ACCESS_SECRET_KEY }}
+      BUILD_ROLE: ${{ secrets.BUILD_ROLE }}
   dev:
-    uses: clouddrove/github-shared-workflows/.github/workflows/tf-checks.yml@master
+    uses: clouddrove/github-shared-workflows/.github/workflows/tf-checks.yml@v2
     with:
       working_directory: './examples/multi-account/dev'
-      provider: none
-      aws_credentials: true
+      provider: aws
+      enable_plan: true
+      show_plan: false
     secrets:
-        AWS_ACCESS_KEY_ID: ${{ secrets.TEST_AWS_ACCESS_KEY }}
-        AWS_SECRET_ACCESS_KEY: ${{ secrets.TEST_AWS_ACCESS_SECRET_KEY }}
+      BUILD_ROLE: ${{ secrets.BUILD_ROLE }}
