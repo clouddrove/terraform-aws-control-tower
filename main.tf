@@ -143,7 +143,7 @@ module "tgw_spoke" {
 #----------------------------------------------ACM----------------------------------------------------##
 module "acm" {
   source  = "clouddrove/acm/aws"
-  version = "1.4.2"
+  version = "1.4.3"
 
   name        = "${var.name}-certificate"
   environment = var.environment
